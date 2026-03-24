@@ -5,6 +5,7 @@ status: draft
 shadcn_initialized: false
 preset: none
 created: 2026-03-24
+revised: 2026-03-24
 ---
 
 # Phase 1 — UI Design Contract
@@ -34,28 +35,34 @@ created: 2026-03-24
 
 ## Spacing Scale
 
-Declared values (all multiples of 4 — base unit is 4px):
+Declared values (standard set — multiples of 4 only):
 
 | Token | Value | Usage |
 |-------|-------|-------|
 | xs | 4px | Inline gap between icon and label; badge padding minimum |
 | sm | 8px | Gap between label and input; badge padding-x; nav item icon-to-text gap |
-| md | 12px | Badge padding-y; compact list gap; input padding-y |
 | lg | 16px | Input padding-x; list gap standard; button padding sm; nav item padding |
-| xl | 20px | Internal gap of small cards |
-| 2xl | 24px | Card padding standard; button padding md; sidebar section spacing |
+| 2xl | 24px | Card padding standard; button padding md; sidebar section spacing; sidebar logo area bottom border spacing |
 | 3xl | 32px | Gap between cards in grid; page content top padding; dashboard section gap |
-| 4xl | 40px | Margin between component blocks |
 | 5xl | 48px | Small section padding |
 | 6xl | 64px | Standard section padding |
-| 7xl | 80px | Spacing between page sections |
-| 8xl | 96px | Hero/XL section padding |
 
-Exceptions:
+Named exceptions (values from `docs/StyleGuide.md` that do not map cleanly to the standard set):
+
+| Token | Value | Justification |
+|-------|-------|---------------|
+| `md` | 12px | Input padding-y — declared in existing `StyleGuide.md` and used throughout `LoginPage.svelte` and all form inputs. Nearest standards (8px and 16px) produce noticeably cramped or oversized inputs in this design system. Named exception retained for form input padding-y only. |
+| `4xl` | 40px | Margin between component blocks — declared in existing `StyleGuide.md`. Nearest standard (32px) collapses block separation; 48px adds excessive whitespace. Named exception retained for inter-block margin only. |
+| `8xl` | 96px | Hero / XL section padding — declared in existing `StyleGuide.md`. Nearest standard (64px) is used for section padding (`6xl`); 96px serves the landing-scale hero tier. Named exception retained for full-page hero padding only. |
+
+Removed from previous draft:
+- `xl` (20px) → replaced with `2xl` (24px) — nearest standard, negligible visual difference
+- `7xl` (80px) → replaced with `6xl` (64px) — nearest standard
+
+Standard exceptions already declared:
 - Sidebar width: 240px (fixed, not on scale — existing implementation)
 - Nav item border-radius: 10px (between `--radius-sm` 6px and `--radius-md` 12px — existing implementation, keep for consistency)
 - Touch targets: minimum 44px height for all interactive elements (login button, nav links, table row actions)
-- Sidebar logo area bottom border spacing: 24px padding-bottom before the border
 
 **Source:** `docs/StyleGuide.md` spacing scale; confirmed in existing `AdminLayout.svelte` and `LoginPage.svelte`.
 
@@ -63,24 +70,30 @@ Exceptions:
 
 ## Typography
 
+Consolidated to 4 sizes and 2 weights.
+
 | Role | Family | Size | Weight | Line Height | Letter Spacing | Usage |
 |------|--------|------|--------|-------------|----------------|-------|
-| Caption / Label | Outfit | 12px / 0.75rem | 500 | 1.50 | 0.05–0.12em uppercase | Form field labels, metric card labels, nav sub-labels, badges, table column headers |
+| Caption / Label | Outfit | 12px / 0.75rem | 400 | 1.50 | 0.05–0.12em uppercase | Form field labels, metric card labels, nav sub-labels, badges, table column headers |
 | Body SM | Outfit | 14px / 0.875rem | 400 | 1.55 | normal | Nav item text, table cell text, description paragraphs, toast messages, error messages |
-| Body | Outfit | 16px / 1rem | 400 | 1.60 | normal | Form inputs, primary body text, button labels (weight 600 when in button) |
-| H5 / Card Title | Space Grotesk | 20px / 1.25rem | 600 | 1.40 | normal | Metric card values, section sub-headings |
-| H3 / Page Title | Space Grotesk | 30px / 1.875rem | 700 | 1.20 | normal | Page h1 ("Dashboard"), login brand wordmark |
-| Brand Display | Space Grotesk | 24px / 1.5rem | 700–800 | 1.10 | normal | "PRISMA" wordmark in login; metric value numbers |
+| Body / Button | Outfit | 16px / 1rem | 400 (body) / 700 (button) | 1.60 | normal | Form inputs, primary body text, button labels |
+| Heading | Space Grotesk | 28px / 1.75rem | 700 | 1.20 | normal | Page titles ("Dashboard"), card/section headings (weight 700), brand wordmark "PRISMA" (weight 700), metric value numbers (weight 700) |
 
-Weights in use: 400 (regular), 500 (medium — labels only), 600 (semibold — buttons, active nav, headings), 700 (bold — page titles, metric values), 800 (extrabold — brand wordmark only).
+Weights in use: **400 (regular)** and **700 (bold)** only.
+
+Weight assignment:
+- 400: body text, nav labels (inactive), table cells, description paragraphs, captions, badge text, toast body, form input values
+- 700: headings, button labels, active nav labels, brand wordmark "PRISMA", metric values, confirm dialog title, error code on error boundary
+
+**Removed from previous draft:** weights 500, 600, and 800 consolidated into 400 or 700. Sizes 20px and 30px merged into 28px heading tier. Size 24px (Brand Display) merged into 28px heading tier — the wordmark and metric values use 28px weight 700 rather than a separate size tier.
 
 Rules:
 - Labels and captions: always `text-transform: uppercase` with `letter-spacing: 0.05em` minimum.
 - Metric card values use Space Grotesk (display font), not Outfit.
-- Button labels: Outfit 16px weight 600.
+- Button labels: Outfit 16px weight 700.
 - All monetary values: formatted via `Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })`.
 
-**Source:** `docs/StyleGuide.md` typography scale; confirmed in `LoginPage.svelte` and `DashboardPage.svelte`.
+**Source:** `docs/StyleGuide.md` typography scale; confirmed in `LoginPage.svelte` and `DashboardPage.svelte`. Consolidated per checker constraint (max 4 sizes, max 2 weights).
 
 ---
 
@@ -141,8 +154,8 @@ Components to be built or migrated this phase. All follow shadcn-svelte patterns
 
 ### Admin Layout (`AdminLayout.svelte`)
 - Sidebar: fixed 240px width, background `#0A0A0F`, right border `1px solid var(--color-border)`
-- Logo area: padding 20px, border-bottom divider, "PRISMA" gradient wordmark (Space Grotesk 800), "Admin Panel" caption
-- Nav items: padding `9px 12px`, radius 10px, gap 10px (icon + label). Active: bg `#141420`, color `#F6F6FF`, weight 600. Inactive: bg transparent, color `#9090A8`, weight 400. Hover: bg `#141420` transition 150ms
+- Logo area: padding 16px, border-bottom divider, "PRISMA" gradient wordmark (Space Grotesk 700), "Admin Panel" caption
+- Nav items: padding `9px 12px`, radius 10px, gap 8px (icon + label). Active: bg `#141420`, color `#F6F6FF`, weight 700. Inactive: bg transparent, color `#9090A8`, weight 400. Hover: bg `#141420` transition 150ms
 - Icons: Lucide Svelte, size 16px (sm), `currentColor`, stroke 1.5
 - Logout item: same nav style, at bottom with top border divider
 - Main content area: `flex: 1`, `overflow: auto`, background `#070707`
@@ -158,7 +171,7 @@ Components to be built or migrated this phase. All follow shadcn-svelte patterns
 - Column sort indicators: Lucide `ChevronUp`/`ChevronDown` 16px icons, secondary color when inactive, primary when active
 
 ### StatusBadge (`src/app/shared/entities/StatusBadge.svelte`)
-- Pill shape: `var(--radius-full)`, padding `4px 10px`, caption size (12px) weight 500 uppercase, letter-spacing 0.05em
+- Pill shape: `var(--radius-full)`, padding `4px 10px`, caption size (12px) weight 400 uppercase, letter-spacing 0.05em
 - Color map by status value:
 
 | Status | Text | Background | Border |
@@ -174,7 +187,7 @@ Components to be built or migrated this phase. All follow shadcn-svelte patterns
 - Native `<dialog>` element with `showModal()` / `close()` via `$effect`
 - Backdrop: `rgba(0,0,0,0.70)`
 - Panel: background `#0F0F18`, border `1px solid var(--color-border)`, radius `var(--radius-2xl)` (24px), shadow `var(--shadow-lg)`, padding 32px, max-width 448px
-- Title: h5 size (20px) Space Grotesk weight 600, primary color
+- Title: heading size (28px) Space Grotesk weight 700, primary color
 - Description: body-sm secondary color
 - Optional reason textarea (when `requiresReason` prop is true): same input styling as login form, label "Motivo" (caption uppercase), `rows=3`, required validation before confirm button enables
 - Confirm button: danger variant when destructive — border `1px solid #FF3B5C`, background `rgba(255,59,92,0.10)`, text `#FF3B5C`; neutral variant otherwise — standard gradient button
@@ -196,15 +209,15 @@ Components to be built or migrated this phase. All follow shadcn-svelte patterns
 ### Error Boundary (`src/routes/+error.svelte`)
 - Full-page centered layout matching login page background
 - Error card: same card style as login panel (max-width 448px, shadow-lg, radius-2xl)
-- Error code: h3 Space Grotesk bold, danger color `#FF3B5C`
-- Error message: body secondary color
+- Error code: heading 28px Space Grotesk weight 700, danger color `#FF3B5C`
+- Error message: body-sm secondary color
 - Back/retry CTA button
 
 ### Dashboard Cards (DASH-01)
 - Grid: `repeat(auto-fill, minmax(220px, 1fr))`, gap 24px
 - Card: background `#0F0F18`, border `1px solid var(--color-border)`, radius `var(--radius-lg)` (16px), padding 24px, shadow `var(--shadow-md)`
-- Label: caption 12px weight 500 uppercase secondary color `#9090A8`, letter-spacing 0.08em
-- Value: Space Grotesk 24px weight 700, colored by metric type (volume/transactions: cyan `#01FAFB`; fees: success `#00E676`; merchants: secondary `#9090A8`)
+- Label: caption 12px weight 400 uppercase secondary color `#9090A8`, letter-spacing 0.08em
+- Value: Space Grotesk 28px weight 700, colored by metric type (volume/transactions: cyan `#01FAFB`; fees: success `#00E676`; merchants: secondary `#9090A8`)
 
 ### Dashboard Alert Cards (DASH-03)
 - Rendered above metric cards grid
@@ -212,14 +225,14 @@ Components to be built or migrated this phase. All follow shadcn-svelte patterns
 - KYC pending alert: warning semantic container, Lucide `Clock` 16px, same pattern → navigates to `/merchants?verification=PENDING_REVIEW`
 
 ### Dashboard Period Tabs (DASH-02)
-- Tab strip: inline flex, gap 4px, tabs `body-sm`, padding `6px 16px`, radius `var(--radius-full)` (pill)
+- Tab strip: inline flex, gap 4px, tabs body-sm, padding `6px 16px`, radius `var(--radius-full)` (pill)
 - Active tab: bg `#141420`, text primary `#F6F6FF`, border `1px solid var(--color-border-hover)`
 - Inactive tab: bg transparent, text secondary `#9090A8`, border `1px solid transparent`, hover bg `#0F0F18`
 - Labels (PT-BR): "Hoje" / "Esta semana" / "Este mês" / "Este ano"
 
 ### 403 Forbidden Page
 - Inline on the page where 403 occurred — NOT a full redirect
-- Warning card style: warning bg container, "Acesso negado" h5 title, body-sm explanation, back button (ghost)
+- Warning card style: warning bg container, "Acesso negado" heading title (28px weight 700), body-sm explanation, back button (ghost)
 
 ---
 
@@ -356,6 +369,8 @@ Components to be built or migrated this phase. All follow shadcn-svelte patterns
 | Chart type (bar chart) | `01-CONTEXT.md` Dashboard section |
 | Toast library | `01-CONTEXT.md` + `01-RESEARCH.md` |
 | Currency formatting | `01-RESEARCH.md` INFRA-08 |
+| Typography consolidation (4 sizes, 2 weights) | Checker revision 2026-03-24 |
+| Spacing non-standard value resolution | Checker revision 2026-03-24 |
 
 ---
 
