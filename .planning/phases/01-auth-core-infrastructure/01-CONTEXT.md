@@ -80,6 +80,9 @@ Downstream agents MUST read these before planning or implementing.
 - `.planning/REQUIREMENTS.md` — AUTH-01 a AUTH-06, RBAC-01 a RBAC-04, INFRA-01 a INFRA-08, DASH-01 a DASH-03
 - `.planning/ROADMAP.md` — Phase 1 success criteria
 
+### Design System
+- `docs/StyleGuide.md` — Style guide visual do projeto (cores, tipografia, espaçamento, componentes) — DEVE ser seguido pelo UI researcher ao gerar o UI-SPEC
+
 ### Código Existente (ler antes de modificar)
 - `src/hooks.server.ts` — guard SSR atual (lê cookie, precisa ser expandido com role check)
 - `src/app/features/auth/services/AuthService.ts` — salva tokens em sessionStorage (precisa também escrever cookie)
