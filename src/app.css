@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @theme {
   /* Brand Colors */
@@ -65,4 +66,38 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
   }
+}
+
+/* shadcn-svelte CSS variables — mapeadas para tokens Prisma */
+/* Direção: --shadcn-var → var(--color-prisma) — NUNCA o inverso */
+:root {
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+
+  --card: var(--color-surface);
+  --card-foreground: var(--color-foreground);
+
+  --popover: var(--color-surface-overlay);
+  --popover-foreground: var(--color-foreground);
+
+  --primary: var(--color-brand-magenta);
+  --primary-foreground: var(--color-background);
+
+  --secondary: var(--color-surface-elevated);
+  --secondary-foreground: var(--color-foreground);
+
+  --muted: var(--color-surface-elevated);
+  --muted-foreground: var(--color-foreground-secondary);
+
+  --accent: var(--color-brand-cyan);
+  --accent-foreground: var(--color-background);
+
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--color-foreground);
+
+  --border: var(--color-border);
+  --input: var(--color-surface-overlay);
+  --ring: var(--color-brand-magenta);
+
+  --radius: var(--radius-md);
 }

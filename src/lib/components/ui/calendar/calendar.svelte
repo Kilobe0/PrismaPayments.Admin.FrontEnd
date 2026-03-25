@@ -6,6 +6,7 @@
 	import { isEqualMonth, type DateValue } from "@internationalized/date";
 	import type { Snippet } from "svelte";
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let {
 		ref = $bindable(null),
 		value = $bindable(),
@@ -20,16 +21,25 @@
 		monthFormat: monthFormatProp,
 		yearFormat = "numeric",
 		day,
+		type = "single",
 		disableDaysOutsideMonth = false,
 		...restProps
-	}: WithoutChildrenOrChild<CalendarPrimitive.RootProps> & {
+	}: Record<string, unknown> & {
+		ref?: HTMLElement | null;
+		value?: DateValue | DateValue[];
+		placeholder?: DateValue;
+		class?: string;
+		weekdayFormat?: "long" | "short" | "narrow";
 		buttonVariant?: ButtonVariant;
 		captionLayout?: "dropdown" | "dropdown-months" | "dropdown-years" | "label";
+		locale?: string;
 		months?: CalendarPrimitive.MonthSelectProps["months"];
 		years?: CalendarPrimitive.YearSelectProps["years"];
 		monthFormat?: CalendarPrimitive.MonthSelectProps["monthFormat"];
 		yearFormat?: CalendarPrimitive.YearSelectProps["yearFormat"];
 		day?: Snippet<[{ day: DateValue; outsideMonth: boolean }]>;
+		type?: "single" | "multiple";
+		disableDaysOutsideMonth?: boolean;
 	} = $props();
 
 	const monthFormat = $derived.by(() => {
@@ -47,6 +57,7 @@ get along, so we shut typescript up by casting `value` to `never`.
 	bind:value={value as never}
 	bind:ref
 	bind:placeholder
+	{type}
 	{weekdayFormat}
 	{disableDaysOutsideMonth}
 	class={cn(
