@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Badge } from '$lib/components/ui/badge/index.js';
+
   interface Props {
     status: string;
   }
@@ -38,45 +40,34 @@
   const variant = $derived(STATUS_MAP[status?.toUpperCase()] ?? DEFAULT_VARIANT);
 </script>
 
-{#if variant.isMed}
-<span
-  class="status-badge status-badge--med"
+<Badge
+  variant="outline"
+  class={variant.isMed ? 'status-badge status-badge--med' : 'status-badge'}
   style="color: {variant.color}; background: {variant.background}; border-color: {variant.border};"
 >
   {status}
-</span>
-{:else}
-<span
-  class="status-badge"
-  style="color: {variant.color}; background: {variant.background}; border-color: {variant.border};"
->
-  {status}
-</span>
-{/if}
+</Badge>
 
 <style>
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
+  :global(.status-badge) {
     border-radius: 9999px;
     padding: 4px 10px;
     font-size: 0.75rem;
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border: 1px solid;
     line-height: 1.5;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
 
   /* MED: pulsing left border — time-sensitive indicator */
-  .status-badge--med {
+  :global(.status-badge--med) {
     border-left-width: 2px;
     animation: med-pulse 1.5s ease-in-out infinite;
   }
 
-  @keyframes med-pulse {
+  @keyframes -global-med-pulse {
     0%, 100% { border-left-color: rgba(255,59,92,0.30); }
     50%       { border-left-color: rgba(255,59,92,0.80); }
   }

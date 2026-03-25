@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Button } from '$lib/components/ui/button/index.js';
+
   interface Props {
     currentPage: number;
     totalPages: number;
@@ -28,44 +30,24 @@
   </span>
 
   <div style="display: flex; gap: 8px;">
-    <button
-      type="button"
-      onclick={() => onPageChange(currentPage - 1)}
+    <Button
+      variant="outline"
+      size="icon"
       disabled={currentPage <= 1}
-      style="
-        background: transparent;
-        border: 1px solid var(--color-border, rgba(255,255,255,0.08));
-        border-radius: var(--radius-md, 12px);
-        padding: 6px 12px;
-        color: {currentPage <= 1 ? 'var(--color-foreground-disabled, #3A3A50)' : 'var(--color-foreground-secondary, #9090A8)'};
-        font-size: 0.875rem;
-        cursor: {currentPage <= 1 ? 'not-allowed' : 'pointer'};
-        min-height: 44px;
-        min-width: 44px;
-        transition: background 0.15s;
-      "
+      onclick={() => onPageChange(currentPage - 1)}
+      style="min-height: 44px; min-width: 44px;"
     >
       ←
-    </button>
+    </Button>
 
-    <button
-      type="button"
-      onclick={() => onPageChange(currentPage + 1)}
+    <Button
+      variant="outline"
+      size="icon"
       disabled={currentPage >= totalPages}
-      style="
-        background: transparent;
-        border: 1px solid var(--color-border, rgba(255,255,255,0.08));
-        border-radius: var(--radius-md, 12px);
-        padding: 6px 12px;
-        color: {currentPage >= totalPages ? 'var(--color-foreground-disabled, #3A3A50)' : 'var(--color-foreground-secondary, #9090A8)'};
-        font-size: 0.875rem;
-        cursor: {currentPage >= totalPages ? 'not-allowed' : 'pointer'};
-        min-height: 44px;
-        min-width: 44px;
-        transition: background 0.15s;
-      "
+      onclick={() => onPageChange(currentPage + 1)}
+      style="min-height: 44px; min-width: 44px;"
     >
       →
-    </button>
+    </Button>
   </div>
 </div>
