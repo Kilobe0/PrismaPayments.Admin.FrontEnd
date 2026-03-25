@@ -2,22 +2,22 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 3 of 4
+current_plan: 4 of 4
 status: executing
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-03-25T03:23:26.362Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-03-25T03:28:57.327Z"
 progress:
   total_phases: 8
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
 **Status:** Executing Phase 01
-**Last session:** 2026-03-25T03:23:26.360Z
+**Last session:** 2026-03-25T03:28:57.324Z
 
 ## Project Reference
 
@@ -29,16 +29,16 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 ## Current Position
 
 **Phase:** 1 (auth-core-infrastructure)
-**Current Plan:** 3 of 4
-**Stopped at:** Completed 01-03-PLAN.md
+**Current Plan:** 4 of 4
+**Stopped at:** Completed 01-04-PLAN.md
 
 ## Current Phase
 
 **Phase 1: Auth + Core Infrastructure**
 
-Plans 01 + 02 + 03 completos: cookie HttpOnly login, SSR guards, token refresh com fila de concorrência, RBAC via setContext, sidebar menu filtrado por role, redirect de / server-side, error boundary, StatusBadge e ConfirmDialog.
+Plans 01 + 02 + 03 + 04 completos: cookie HttpOnly login, SSR guards, token refresh com fila de concorrência, RBAC via setContext, sidebar menu filtrado por role, redirect de / server-side, error boundary, StatusBadge, ConfirmDialog, DataTable genérico com @tanstack/table-core, Pagination, SearchInput, SelectFilter, DateRangeFilter.
 
-Próximo: Plan 04 — DataTable + Pagination components.
+Phase 1 completa — todos os 4 planos executados.
 
 ## Roadmap Summary
 
@@ -91,6 +91,7 @@ Próximo: Plan 04 — DataTable + Pagination components.
 | 01 | 01 | ~5 min | 3/3 | 17 |
 | 01 | 02 | 8 min | 2/2 | 5 |
 | 01 | 03 | 3 min | 2/2 | 6 |
+| 01 | 04 | 3 min | 2/2 | 6 |
 
 ## Decisions Made in Plan 01-03
 
@@ -98,6 +99,12 @@ Próximo: Plan 04 — DataTable + Pagination components.
 - Inline style props for StatusBadge dynamic colors — Svelte scoped CSS cannot use runtime values in class definitions
 - `$effect` for dialog showModal/close ensures correct lifecycle coordination with Svelte 5 reactivity
 
+## Decisions Made in Plan 01-04
+
+- createTable wrapped in $derived (not $state) so it reacts to data/sorting changes automatically in Svelte 5
+- Client-side pagination via row slice for simpler page reset logic on data change
+- Outside-click overlay (z-index 49) for SelectFilter dropdown uses fixed position pattern
+
 ## Next Action
 
-Execute Plan 04: DataTable + Pagination components (próxima wave).
+Phase 1 complete. Ready to begin Phase 2: Merchants.

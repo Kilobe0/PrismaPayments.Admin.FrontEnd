@@ -23,8 +23,8 @@
 
 ### Infraestrutura Compartilhada
 
-- [ ] **INFRA-01**: Componente `DataTable<T>` genérico com paginação, colunas configuráveis via `ColumnDef[]` e cell slots — reutilizado em todas as features de listagem
-- [ ] **INFRA-02**: Componentes de filtro reutilizáveis: filtro por texto, por status (dropdown), por período (date range picker) — compostos por feature
+- [x] **INFRA-01**: Componente `DataTable<T>` genérico com paginação, colunas configuráveis via `ColumnDef[]` e cell slots — reutilizado em todas as features de listagem
+- [x] **INFRA-02**: Componentes de filtro reutilizáveis: filtro por texto, por status (dropdown), por período (date range picker) — compostos por feature
 - [x] **INFRA-03**: Componente `StatusBadge` com mapeamento de cor por entidade (Merchant, Pagamento, Saque, Disputa, Verificação)
 - [x] **INFRA-04**: `ConfirmDialog` reutilizável com campo de motivo opcional para ações destrutivas
 - [x] **INFRA-05**: Sistema de toast/notificação (`svelte-sonner`) para feedback de ações (sucesso, erro, loading)

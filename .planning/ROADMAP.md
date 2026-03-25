@@ -6,7 +6,7 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 
 ## Phases
 
-- [ ] **Phase 1: Auth + Core Infrastructure** - Corrigir o bug crítico de cookie, implementar refresh de token, ativar RBAC e construir todos os componentes compartilhados que as demais features dependem
+- [x] **Phase 1: Auth + Core Infrastructure** - Corrigir o bug crítico de cookie, implementar refresh de token, ativar RBAC e construir todos os componentes compartilhados que as demais features dependem (completed 2026-03-25)
 - [ ] **Phase 2: Merchants** - Entrega completa da feature de merchants: lista paginada, detalhe tabulado, review de KYC, ações de status e criação — o template que todas as features seguintes copiam
 - [ ] **Phase 3: Transactions** - Listas cross-merchant de pagamentos e saques com filtros completos e páginas de detalhe por método de pagamento
 - [ ] **Phase 4: Disputes** - Lista de disputas com destaque para MED time-sensitive, timeline visual e formulário de resolução para SUPPORT+
@@ -116,7 +116,7 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Auth + Core Infrastructure | 3/4 | In Progress|  |
+| 1. Auth + Core Infrastructure | 4/4 | Complete   | 2026-03-25 |
 | 2. Merchants | 0/0 | Not started | - |
 | 3. Transactions | 0/0 | Not started | - |
 | 4. Disputes | 0/0 | Not started | - |
