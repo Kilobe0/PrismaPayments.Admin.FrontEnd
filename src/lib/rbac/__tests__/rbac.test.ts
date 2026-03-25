@@ -1,21 +1,27 @@
-import { describe, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import { hasPermission } from '../../../app/shared/guards/adminGuard';
+import type { AdminRole } from '../../../app/shared/guards/adminGuard';
 
-describe('RBAC-01: role disponível globalmente após login', () => {
-  it.todo('adminRole do JWT está acessível no layout data após SSR');
-  it.todo('adminRole persiste entre navegações de página');
+describe('RBAC-01: hasPermission', () => {
+  it('VIEWER não tem permissão para ADMIN', () => {
+    expect(hasPermission('VIEWER', 'ADMIN')).toBe(false);
+  });
+  it('ADMIN tem permissão para SUPPORT', () => {
+    expect(hasPermission('ADMIN', 'SUPPORT')).toBe(true);
+  });
+  it('SUPER_ADMIN tem permissão para SUPER_ADMIN', () => {
+    expect(hasPermission('SUPER_ADMIN', 'SUPER_ADMIN')).toBe(true);
+  });
+  it('null role não tem permissão para VIEWER', () => {
+    expect(hasPermission(null, 'VIEWER')).toBe(false);
+  });
 });
 
-describe('RBAC-02: menus condicionais por role', () => {
-  it.todo('VIEWER não vê itens de menu restritos a ADMIN+');
-  it.todo('SUPER_ADMIN vê todos os itens de menu');
-});
-
-describe('RBAC-03: rotas protegidas por role redirecionam', () => {
-  it.todo('acesso a rota ADMIN+ com role VIEWER redireciona para /dashboard');
-  it.todo('acesso a rota SUPER_ADMIN com role ADMIN redireciona');
-});
-
-describe('RBAC-04: hasPermission retorna valor correto', () => {
-  it.todo('SUPER_ADMIN tem permissão para qualquer role requerida');
-  it.todo('VIEWER não tem permissão para ADMIN');
+describe('RBAC-02: menu RBAC', () => {
+  it('hasPermission(VIEWER, SUPER_ADMIN) retorna false — item de menu admin ocultado', () => {
+    expect(hasPermission('VIEWER' as AdminRole, 'SUPER_ADMIN')).toBe(false);
+  });
+  it('hasPermission(SUPER_ADMIN, SUPER_ADMIN) retorna true — item de menu admin visível', () => {
+    expect(hasPermission('SUPER_ADMIN' as AdminRole, 'SUPER_ADMIN')).toBe(true);
+  });
 });
