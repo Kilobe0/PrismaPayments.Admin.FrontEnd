@@ -48,3 +48,11 @@ describe('INFRA-06: Error boundary', () => {
 describe('INFRA-07: redirect de /', () => {
   it.todo('+page.server.ts lança redirect(302, /dashboard)');
 });
+
+describe('INFRA-01: DataTable', () => {
+  it.todo('renderiza N linhas para N items de data');
+  it.todo('paginação prev/next atualiza currentPage');
+  it.todo('empty state exibe "Nenhum resultado" quando data vazio');
+  it.todo('loading=true exibe skeleton rows');
+  it.todo('coluna com sorting ativa mostra ChevronUp/Down');
+});
