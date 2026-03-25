@@ -59,13 +59,15 @@
 
     <!-- Logout -->
     <div style="padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08);">
-      <a
-        href="/login"
-        style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; font-size: 0.875rem; color: #9090A8; text-decoration: none;"
-      >
-        <span>🚪</span>
-        Sair
-      </a>
+      <form method="POST" action="/login?/logout">
+        <button
+          type="submit"
+          style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; font-size: 0.875rem; color: #9090A8; background: transparent; border: none; cursor: pointer; width: 100%;"
+        >
+          <span>🚪</span>
+          Sair
+        </button>
+      </form>
     </div>
   </aside>
 
