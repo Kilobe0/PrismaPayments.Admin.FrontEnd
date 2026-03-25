@@ -116,7 +116,7 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Auth + Core Infrastructure | 2/4 | In Progress|  |
+| 1. Auth + Core Infrastructure | 3/4 | In Progress|  |
 | 2. Merchants | 0/0 | Not started | - |
 | 3. Transactions | 0/0 | Not started | - |
 | 4. Disputes | 0/0 | Not started | - |

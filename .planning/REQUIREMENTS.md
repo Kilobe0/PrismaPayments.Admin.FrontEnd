@@ -25,12 +25,12 @@
 
 - [ ] **INFRA-01**: Componente `DataTable<T>` genérico com paginação, colunas configuráveis via `ColumnDef[]` e cell slots — reutilizado em todas as features de listagem
 - [ ] **INFRA-02**: Componentes de filtro reutilizáveis: filtro por texto, por status (dropdown), por período (date range picker) — compostos por feature
-- [ ] **INFRA-03**: Componente `StatusBadge` com mapeamento de cor por entidade (Merchant, Pagamento, Saque, Disputa, Verificação)
-- [ ] **INFRA-04**: `ConfirmDialog` reutilizável com campo de motivo opcional para ações destrutivas
-- [ ] **INFRA-05**: Sistema de toast/notificação (`svelte-sonner`) para feedback de ações (sucesso, erro, loading)
-- [ ] **INFRA-06**: Error boundary global (`+error.svelte`) com UI amigável
-- [ ] **INFRA-07**: Redirecionamento de `/` para `/dashboard` via SvelteKit server redirect (substituindo o meta refresh atual)
-- [ ] **INFRA-08**: Formatação correta de valores monetários: centavos como inteiros → `Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'})`
+- [x] **INFRA-03**: Componente `StatusBadge` com mapeamento de cor por entidade (Merchant, Pagamento, Saque, Disputa, Verificação)
+- [x] **INFRA-04**: `ConfirmDialog` reutilizável com campo de motivo opcional para ações destrutivas
+- [x] **INFRA-05**: Sistema de toast/notificação (`svelte-sonner`) para feedback de ações (sucesso, erro, loading)
+- [x] **INFRA-06**: Error boundary global (`+error.svelte`) com UI amigável
+- [x] **INFRA-07**: Redirecionamento de `/` para `/dashboard` via SvelteKit server redirect (substituindo o meta refresh atual)
+- [x] **INFRA-08**: Formatação correta de valores monetários: centavos como inteiros → `Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'})`
 
 ### Dashboard
 

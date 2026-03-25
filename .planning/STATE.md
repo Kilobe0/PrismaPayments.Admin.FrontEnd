@@ -2,22 +2,22 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 2 of 4
+current_plan: 3 of 4
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-03-25T03:17:42.030Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-03-25T03:23:26.362Z"
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
 **Status:** Executing Phase 01
-**Last session:** 2026-03-25T03:17:42.028Z
+**Last session:** 2026-03-25T03:23:26.360Z
 
 ## Project Reference
 
@@ -29,16 +29,16 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 ## Current Position
 
 **Phase:** 1 (auth-core-infrastructure)
-**Current Plan:** 2 of 4
-**Stopped at:** Completed 01-02-PLAN.md
+**Current Plan:** 3 of 4
+**Stopped at:** Completed 01-03-PLAN.md
 
 ## Current Phase
 
 **Phase 1: Auth + Core Infrastructure**
 
-Plans 01 + 02 completos: cookie HttpOnly login, SSR guards, token refresh com fila de concorrência, RBAC via setContext, sidebar menu filtrado por role.
+Plans 01 + 02 + 03 completos: cookie HttpOnly login, SSR guards, token refresh com fila de concorrência, RBAC via setContext, sidebar menu filtrado por role, redirect de / server-side, error boundary, StatusBadge e ConfirmDialog.
 
-Próximo: Plan 03 — DataTable + componentes compartilhados.
+Próximo: Plan 04 — DataTable + Pagination components.
 
 ## Roadmap Summary
 
@@ -90,7 +90,14 @@ Próximo: Plan 03 — DataTable + componentes compartilhados.
 |-------|------|----------|-------|-------|
 | 01 | 01 | ~5 min | 3/3 | 17 |
 | 01 | 02 | 8 min | 2/2 | 5 |
+| 01 | 03 | 3 min | 2/2 | 6 |
+
+## Decisions Made in Plan 01-03
+
+- Native `<dialog>` element for ConfirmDialog — no external modal library needed (browser-native Escape handling, backdrop, focus trap)
+- Inline style props for StatusBadge dynamic colors — Svelte scoped CSS cannot use runtime values in class definitions
+- `$effect` for dialog showModal/close ensures correct lifecycle coordination with Svelte 5 reactivity
 
 ## Next Action
 
-Execute Plan 03: DataTable + componentes compartilhados (próxima wave).
+Execute Plan 04: DataTable + Pagination components (próxima wave).
