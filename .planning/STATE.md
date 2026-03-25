@@ -1,22 +1,42 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: executing
+last_updated: "2026-03-25T03:15:00.000Z"
+progress:
+  total_phases: 8
+  completed_phases: 0
+  total_plans: 4
+  completed_plans: 1
+---
+
 # Project State
 
-**Last updated:** 2026-03-24
-**Status:** Ready for Phase 1
+**Last updated:** 2026-03-25
+**Status:** Executing Phase 01
+**Last session:** 2026-03-25 — Completed 01-01-PLAN.md
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Equipe interna opera a plataforma de pagamentos — aprovações, disputas, monitoramento — com interface confiável e RBAC.
-**Current focus:** Phase 1 — Auth + Core Infrastructure
+**Current focus:** Phase 01 — auth-core-infrastructure
+
+## Current Position
+
+**Phase:** 1 (auth-core-infrastructure)
+**Current Plan:** 2 of 4
+**Stopped at:** Completed 01-01-PLAN.md
 
 ## Current Phase
 
 **Phase 1: Auth + Core Infrastructure**
 
-Bloqueador crítico: cookie `access_token` nunca é escrito no login — toda navegação pós-login redireciona para `/login`. Este é o único item que importa na Phase 1.
+Bloqueador crítico RESOLVIDO: cookie `access_token` agora é escrito via SvelteKit form action.
 
-Após o fix de auth: token refresh, RBAC guards, componentes compartilhados (DataTable, StatusBadge, ConfirmDialog, Toast, error boundary), formatação de moeda, melhoria do dashboard.
+Próximo: Plan 02 — token refresh com fila de concorrência.
 
 ## Roadmap Summary
 
@@ -49,8 +69,20 @@ Após o fix de auth: token refresh, RBAC guards, componentes compartilhados (Dat
 - Auth: cookie HttpOnly via server action + sessionStorage no cliente (dois layers)
 - Token refresh: fila de requisições concorrentes durante refresh
 
+## Decisions Made in Plan 01-01
+
+- Login usa SvelteKit form action (não client-side fetch) para escrever HttpOnly cookie server-side
+- Logout via form POST a /login?/logout para garantir limpeza de cookie no servidor
+- tokenStorage usa jwt-decode v4 (substitui hack atob)
+- tokenStorage.decodeJwtPayload exportado explicitamente para uso pelo apiClient no plan 02
+- vitest@2.1.9 pinado com @vitest/coverage-v8@2.1.9 para evitar conflito de peer deps
+
+## Performance Metrics
+
+| Phase | Plan | Duration | Tasks | Files |
+|-------|------|----------|-------|-------|
+| 01 | 01 | ~5 min | 3/3 | 17 |
+
 ## Next Action
 
-```
-/gsd:plan-phase 1
-```
+Execute Plan 02: Token refresh com fila de concorrência.

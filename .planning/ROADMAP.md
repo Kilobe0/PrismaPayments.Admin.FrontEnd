@@ -116,7 +116,7 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Auth + Core Infrastructure | 0/0 | Not started | - |
+| 1. Auth + Core Infrastructure | 1/4 | In progress | Plan 01: 2026-03-25 |
 | 2. Merchants | 0/0 | Not started | - |
 | 3. Transactions | 0/0 | Not started | - |
 | 4. Disputes | 0/0 | Not started | - |
@@ -133,12 +133,12 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete (01-01) |
+| AUTH-02 | Phase 1 | Complete (01-01) |
 | AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
-| AUTH-05 | Phase 1 | Pending |
-| AUTH-06 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Complete (01-01) |
+| AUTH-05 | Phase 1 | Complete (01-01) |
+| AUTH-06 | Phase 1 | Complete (01-01) |
 | RBAC-01 | Phase 1 | Pending |
 | RBAC-02 | Phase 1 | Pending |
 | RBAC-03 | Phase 1 | Pending |
