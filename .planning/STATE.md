@@ -3,31 +3,37 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-25T03:54:59.980Z"
+last_updated: "2026-03-25T13:05:16.342Z"
 progress:
-  total_phases: 8
+  total_phases: 9
   completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 8
+  completed_plans: 6
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
 **Status:** Ready to execute
-**Last session:** 2026-03-25T03:54:59.978Z
+**Last session:** 2026-03-25T13:05:16.339Z
+
+## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 01.1 inserida após Phase 1: shadcn init e identidade visual Prisma (URGENT)
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Equipe interna opera a plataforma de pagamentos — aprovações, disputas, monitoramento — com interface confiável e RBAC.
-**Current focus:** Phase 01 — auth-core-infrastructure
+**Current focus:** Phase 01.1 — shadcn-init-e-identidade-visual-prisma
 
 ## Current Position
 
-Phase: 01 (auth-core-infrastructure) — EXECUTING
-Plan: 2 of 5
+Phase: 01.1 (shadcn-init-e-identidade-visual-prisma) — EXECUTING
+Plan: 2 of 3
 
 ## Current Phase
 
@@ -90,6 +96,7 @@ Phase 1 completa — todos os 5 planos executados.
 | 01 | 03 | 3 min | 2/2 | 6 |
 | 01 | 04 | 3 min | 2/2 | 6 |
 | 01 | 05 | 2 min | 2/2 | 6 |
+| Phase 01.1-shadcn-init-e-identidade-visual-prisma P01 | 8 min | 2 tasks | 104 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -109,6 +116,12 @@ Phase 1 completa — todos os 5 planos executados.
 - Dual y-axis chart (volume R$ left, transaction count right) — different units require separate scales
 - DASHBOARD_ADMIN_SERIES as function (period: string) => string — consistent with parameterized path pattern in apiPaths.ts
 
+## Decisions Made in Plan 01.1-01
+
+- shadcn-svelte@1.2.3 uses nova style internally; components.json retains "new-york" label for spec compliance — zero functional difference
+- Calendar component uses Record<string,unknown> intersection type to avoid bits-ui discriminated union TypeScript complexity error (known shadcn-svelte + bits-ui@2.16.3 incompatibility)
+- tailwind-merge installed alongside tailwind-variants to support standard cn() helper pattern
+
 ## Next Action
 
-Phase 1 complete (all 5 plans executed). Ready to begin Phase 2: Merchants.
+Executing Phase 01.1 Plan 02 of 3.
