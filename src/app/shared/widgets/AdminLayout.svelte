@@ -56,12 +56,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 9px 12px;
+            padding: 9px 12px 9px {isActive ? '10px' : '12px'};
             border-radius: 10px;
             font-size: 0.875rem;
             font-weight: {isActive ? '700' : '400'};
             color: {isActive ? 'var(--color-foreground, #F6F6FF)' : 'var(--color-foreground-secondary, #9090A8)'};
             background: {isActive ? 'var(--color-surface-elevated, #141420)' : 'transparent'};
+            border-left: {isActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
+            box-shadow: {isActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
             text-decoration: none;
             transition: background 0.15s, color 0.15s;
             min-height: 44px;
