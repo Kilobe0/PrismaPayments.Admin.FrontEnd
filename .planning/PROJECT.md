@@ -21,6 +21,10 @@ Equipe interna deve conseguir operar e supervisionar toda a plataforma de pagame
 - ✓ Sistema de roteamento SvelteKit com grupo `(admin)` — existente
 - ✓ Entidade `AdminUser` e contrato `IAuthRepository` — existente
 - ✓ Service Locator e padrão Either<Failure, T> — existente
+- ✓ **shadcn-svelte inicializado** com style new-york/zinc, 13 componentes em `src/lib/components/ui/` — Validated in Phase 01.1: shadcn-init-e-identidade-visual-prisma
+- ✓ **Tema Prisma aplicado** em app.css (14 CSS vars shadcn → tokens Prisma, nenhum HSL cinza) — Validated in Phase 01.1
+- ✓ **Widgets migrados para shadcn/bits-ui** (ConfirmDialog, StatusBadge, Pagination, DataTable, filtros) — Validated in Phase 01.1
+- ✓ **Glow Prisma na sidebar** (item ativo com border magenta + box-shadow) — Validated in Phase 01.1
 
 ### Active
 
@@ -42,7 +46,7 @@ Equipe interna deve conseguir operar e supervisionar toda a plataforma de pagame
 - [ ] **Diagnósticos**: lista de logs HTTP com filtros avançados, detalhe de request/response, trace view e estatísticas
 - [ ] **Configuração da Plataforma**: snapshot read-only de configuração (role ADMIN+)
 - [ ] **RBAC na UI**: ocultar ações e menus baseado no role do JWT (VIEWER/SUPPORT/ADMIN/SUPER_ADMIN)
-- [ ] **Componentes compartilhados**: DataTable, Pagination, Filters, StatusBadge, ConfirmDialog, Toast
+- [ ] **Componentes compartilhados**: ~~DataTable, Pagination, Filters, StatusBadge, ConfirmDialog~~ migrados para shadcn — Toast pendente
 - [ ] **Error boundary**: `+error.svelte` global
 
 ### Out of Scope
@@ -111,4 +115,4 @@ Este documento evolui a cada transição de fase e milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-03-24 after initialization (brownfield)*
+*Last updated: 2026-03-25 after Phase 01.1 (shadcn-init-e-identidade-visual-prisma)*
