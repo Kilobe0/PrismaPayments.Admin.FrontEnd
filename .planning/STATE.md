@@ -2,22 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 4 of 4
 status: executing
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-03-25T03:28:57.327Z"
+last_updated: "2026-03-25T03:54:59.980Z"
 progress:
   total_phases: 8
   completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
-**Status:** Executing Phase 01
-**Last session:** 2026-03-25T03:28:57.324Z
+**Status:** Ready to execute
+**Last session:** 2026-03-25T03:54:59.978Z
 
 ## Project Reference
 
@@ -28,17 +26,16 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 
 ## Current Position
 
-**Phase:** 1 (auth-core-infrastructure)
-**Current Plan:** 4 of 4
-**Stopped at:** Completed 01-04-PLAN.md
+Phase: 01 (auth-core-infrastructure) — EXECUTING
+Plan: 2 of 5
 
 ## Current Phase
 
 **Phase 1: Auth + Core Infrastructure**
 
-Plans 01 + 02 + 03 + 04 completos: cookie HttpOnly login, SSR guards, token refresh com fila de concorrência, RBAC via setContext, sidebar menu filtrado por role, redirect de / server-side, error boundary, StatusBadge, ConfirmDialog, DataTable genérico com @tanstack/table-core, Pagination, SearchInput, SelectFilter, DateRangeFilter.
+Plans 01 + 02 + 03 + 04 + 05 completos: cookie HttpOnly login, SSR guards, token refresh com fila de concorrência, RBAC via setContext, sidebar menu filtrado por role, redirect de / server-side, error boundary, StatusBadge, ConfirmDialog, DataTable genérico com @tanstack/table-core, Pagination, SearchInput, SelectFilter, DateRangeFilter. DASH-02 (bar chart com period tabs via svelte5-chartjs) e DASH-03 (alert cards de disputas e KYC) implementados.
 
-Phase 1 completa — todos os 4 planos executados.
+Phase 1 completa — todos os 5 planos executados.
 
 ## Roadmap Summary
 
@@ -92,6 +89,7 @@ Phase 1 completa — todos os 4 planos executados.
 | 01 | 02 | 8 min | 2/2 | 5 |
 | 01 | 03 | 3 min | 2/2 | 6 |
 | 01 | 04 | 3 min | 2/2 | 6 |
+| 01 | 05 | 2 min | 2/2 | 6 |
 
 ## Decisions Made in Plan 01-03
 
@@ -105,6 +103,12 @@ Phase 1 completa — todos os 4 planos executados.
 - Client-side pagination via row slice for simpler page reset logic on data change
 - Outside-click overlay (z-index 49) for SelectFilter dropdown uses fixed position pattern
 
+## Decisions Made in Plan 01-05
+
+- $effect for chart data re-fetch on activePeriod change — reactive without onMount complexity
+- Dual y-axis chart (volume R$ left, transaction count right) — different units require separate scales
+- DASHBOARD_ADMIN_SERIES as function (period: string) => string — consistent with parameterized path pattern in apiPaths.ts
+
 ## Next Action
 
-Phase 1 complete. Ready to begin Phase 2: Merchants.
+Phase 1 complete (all 5 plans executed). Ready to begin Phase 2: Merchants.

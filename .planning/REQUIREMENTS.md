@@ -35,8 +35,8 @@
 ### Dashboard
 
 - [ ] **DASH-01**: Cards de métricas globais: volume total, transações do dia, saldo disponível da plataforma, taxas coletadas, total de merchants
-- [ ] **DASH-02**: Gráfico de volume e transações por período (diário/semanal/mensal)
-- [ ] **DASH-03**: Alertas visuais: disputas abertas, verificações pendentes de KYC
+- [x] **DASH-02**: Gráfico de volume e transações por período (diário/semanal/mensal)
+- [x] **DASH-03**: Alertas visuais: disputas abertas, verificações pendentes de KYC
 
 ### Gestão de Merchants
 
