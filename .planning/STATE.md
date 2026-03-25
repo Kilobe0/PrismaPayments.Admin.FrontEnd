@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-last_updated: "2026-03-25T17:16:17.834Z"
+status: verifying
+last_updated: "2026-03-25T17:17:01.294Z"
 progress:
   total_phases: 9
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
-**Status:** Ready to execute
-**Last session:** 2026-03-25T17:16:17.830Z
+**Status:** Phase complete — ready for verification
+**Last session:** 2026-03-25T17:17:01.290Z
 
 ## Accumulated Context
 
@@ -98,6 +98,7 @@ Phase 1 completa — todos os 5 planos executados.
 | 01 | 05 | 2 min | 2/2 | 6 |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P01 | 8 min | 2 tasks | 104 files |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P02 | 5 min | 2 tasks | 3 files |
+| Phase 01.1-shadcn-init-e-identidade-visual-prisma P03 | 10 | 2 tasks | 5 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -123,6 +124,13 @@ Phase 1 completa — todos os 5 planos executados.
 - Calendar component uses Record<string,unknown> intersection type to avoid bits-ui discriminated union TypeScript complexity error (known shadcn-svelte + bits-ui@2.16.3 incompatibility)
 - tailwind-merge installed alongside tailwind-variants to support standard cn() helper pattern
 
+## Decisions Made in Plan 01.1-03
+
+- bits-ui Select requires type='single' prop to resolve TypeScript union ambiguity (SelectSingleRootProps vs SelectMultipleRootProps)
+- Select.Value not exported by shadcn-svelte select — selected option label computed via $derived from options array
+- Input shadcn passes style via ...restProps spread, so inline style override works correctly
+- AdminLayout glow uses padding 4-value shorthand to control padding-left independently per isActive state
+
 ## Next Action
 
-Executing Phase 01.1 Plan 02 of 3.
+Phase 01.1 complete (3/3 plans). Ready for verification or Phase 2: Merchants.
