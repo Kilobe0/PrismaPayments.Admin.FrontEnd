@@ -35,11 +35,11 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 **Goal:** Inicializar shadcn-svelte, instalar primitivas bits-ui como componentes prontos (Button, Badge, Input, Select, Dialog, Table, etc.) e migrar todos os widgets compartilhados para usar essas primitivas internamente, aplicando identidade visual Prisma (dark theme, magenta/cyan, glow na sidebar)
 **Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04
 **Depends on:** Phase 1
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [x] 01.1-01-PLAN.md — shadcn init + instalar 13 componentes + CSS vars Prisma em app.css
-- [ ] 01.1-02-PLAN.md — migrar ConfirmDialog (Dialog bits-ui), StatusBadge (Badge shadcn), Pagination (Button shadcn)
+- [x] 01.1-02-PLAN.md — migrar ConfirmDialog (Dialog bits-ui), StatusBadge (Badge shadcn), Pagination (Button shadcn)
 - [ ] 01.1-03-PLAN.md — migrar DataTable (Table shadcn), filtros (Select/Input shadcn), AdminLayout glow
 
 ### Phase 2: Merchants
@@ -129,7 +129,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Auth + Core Infrastructure | 5/5 | Complete   | 2026-03-25 |
-| 01.1. shadcn init + identidade visual | 1/3 | In Progress|  |
+| 01.1. shadcn init + identidade visual | 2/3 | In Progress|  |
 | 2. Merchants | 0/0 | Not started | - |
 | 3. Transactions | 0/0 | Not started | - |
 | 4. Disputes | 0/0 | Not started | - |
