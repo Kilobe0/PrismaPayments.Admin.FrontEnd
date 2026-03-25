@@ -9,17 +9,17 @@
 
 - [ ] **AUTH-01**: Admin pode fazer login com email e senha via `/api/v1/auth/admin/login`
 - [ ] **AUTH-02**: Tokens (accessToken + refreshToken) são persistidos de forma que o SSR e o cliente permaneçam sincronizados (cookie HttpOnly para SSR + sessionStorage para o cliente)
-- [ ] **AUTH-03**: Token de acesso expirado é renovado automaticamente via interceptor antes que o usuário perceba (refresh transparente com fila de requisições concorrentes)
+- [x] **AUTH-03**: Token de acesso expirado é renovado automaticamente via interceptor antes que o usuário perceba (refresh transparente com fila de requisições concorrentes)
 - [ ] **AUTH-04**: Todas as rotas admin redirecionam para `/login` se o usuário não está autenticado
-- [ ] **AUTH-05**: Role do admin é extraído do JWT (sem verificação de assinatura no cliente) e disponibilizado globalmente para guards e renderização condicional
+- [x] **AUTH-05**: Role do admin é extraído do JWT (sem verificação de assinatura no cliente) e disponibilizado globalmente para guards e renderização condicional
 - [ ] **AUTH-06**: Logout limpa todos os tokens (cookie + sessionStorage) e redireciona para `/login`
 
 ### Controle de Acesso por Role (RBAC)
 
-- [ ] **RBAC-01**: Rotas e ações são protegidas por role mínimo: VIEWER / SUPPORT / ADMIN / SUPER_ADMIN
-- [ ] **RBAC-02**: Itens de menu e botões de ação são ocultados (não desabilitados) quando o role do usuário é insuficiente
-- [ ] **RBAC-03**: Retorno 403 do backend exibe mensagem de acesso negado (não redireciona para login)
-- [ ] **RBAC-04**: Guards são aplicados tanto no SSR (`+page.server.ts`) quanto no cliente (`onMount`)
+- [x] **RBAC-01**: Rotas e ações são protegidas por role mínimo: VIEWER / SUPPORT / ADMIN / SUPER_ADMIN
+- [x] **RBAC-02**: Itens de menu e botões de ação são ocultados (não desabilitados) quando o role do usuário é insuficiente
+- [x] **RBAC-03**: Retorno 403 do backend exibe mensagem de acesso negado (não redireciona para login)
+- [x] **RBAC-04**: Guards são aplicados tanto no SSR (`+page.server.ts`) quanto no cliente (`onMount`)
 
 ### Infraestrutura Compartilhada
 

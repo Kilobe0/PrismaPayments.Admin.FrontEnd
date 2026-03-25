@@ -2,20 +2,22 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
+current_plan: 2 of 4
 status: executing
-last_updated: "2026-03-25T03:15:00.000Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-03-25T03:17:42.030Z"
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
 **Status:** Executing Phase 01
-**Last session:** 2026-03-25 — Completed 01-01-PLAN.md
+**Last session:** 2026-03-25T03:17:42.028Z
 
 ## Project Reference
 
@@ -28,15 +30,15 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Phase:** 1 (auth-core-infrastructure)
 **Current Plan:** 2 of 4
-**Stopped at:** Completed 01-01-PLAN.md
+**Stopped at:** Completed 01-02-PLAN.md
 
 ## Current Phase
 
 **Phase 1: Auth + Core Infrastructure**
 
-Bloqueador crítico RESOLVIDO: cookie `access_token` agora é escrito via SvelteKit form action.
+Plans 01 + 02 completos: cookie HttpOnly login, SSR guards, token refresh com fila de concorrência, RBAC via setContext, sidebar menu filtrado por role.
 
-Próximo: Plan 02 — token refresh com fila de concorrência.
+Próximo: Plan 03 — DataTable + componentes compartilhados.
 
 ## Roadmap Summary
 
@@ -77,12 +79,18 @@ Próximo: Plan 02 — token refresh com fila de concorrência.
 - tokenStorage.decodeJwtPayload exportado explicitamente para uso pelo apiClient no plan 02
 - vitest@2.1.9 pinado com @vitest/coverage-v8@2.1.9 para evitar conflito de peer deps
 
+## Decisions Made in Plan 01-02
+
+- rbac.test.ts importa adminGuard via caminho relativo (não alias $appmod) para compatibilidade com vitest — padrão consistente com auth.test.ts do plan 01
+- Rota logout do plan 01 mantida sem alterações — implementação com auto-submit é superior ao spec do plan 02
+
 ## Performance Metrics
 
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 01 | 01 | ~5 min | 3/3 | 17 |
+| 01 | 02 | 8 min | 2/2 | 5 |
 
 ## Next Action
 
-Execute Plan 02: Token refresh com fila de concorrência.
+Execute Plan 03: DataTable + componentes compartilhados (próxima wave).
