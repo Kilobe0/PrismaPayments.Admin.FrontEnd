@@ -47,5 +47,6 @@ export const API_PATHS = {
   DIAGNOSTICS_STATS: '/api/v1/diagnostics/logs/stats',
 
   // Dashboard
-  DASHBOARD_ADMIN: '/api/v1/dashboard/admin'
+  DASHBOARD_ADMIN: '/api/v1/dashboard/admin',
+  DASHBOARD_ADMIN_SERIES: (period: string) => `/api/v1/dashboard/admin/series?period=${period}`
 } as const;
