@@ -8,6 +8,7 @@
     type Row
   } from '@tanstack/table-core';
   import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
+  import * as Table from '$lib/components/ui/table/index.js';
   import Pagination from './Pagination.svelte';
   import type { Snippet } from 'svelte';
 
@@ -74,22 +75,20 @@
   "
 >
   <div style="overflow-x: auto;">
-    <table style="width: 100%; border-collapse: collapse;">
-      <!-- Header -->
-      <thead>
+    <Table.Root style="width: 100%;">
+      <Table.Header>
         {#each table.getHeaderGroups() as headerGroup}
-          <tr
+          <Table.Row
             style="
               background: var(--color-background-subtle, #0A0A0F);
               border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08));
             "
           >
             {#each headerGroup.headers as header}
-              <th
+              <Table.Head
                 onclick={header.column.getToggleSortingHandler()}
                 style="
                   padding: 12px 16px;
-                  text-align: left;
                   font-size: 0.75rem;
                   font-weight: 400;
                   color: var(--color-foreground-secondary, #9090A8);
@@ -114,20 +113,19 @@
                     {/if}
                   {/if}
                 </div>
-              </th>
+              </Table.Head>
             {/each}
-          </tr>
+          </Table.Row>
         {/each}
-      </thead>
+      </Table.Header>
 
-      <!-- Body -->
-      <tbody>
+      <Table.Body>
         {#if loading}
           <!-- Skeleton rows -->
           {#each Array(SKELETON_COUNT) as _, i}
-            <tr>
+            <Table.Row>
               {#each columns as _col}
-                <td style="padding: 12px 16px;">
+                <Table.Cell style="padding: 12px 16px;">
                   <div
                     style="
                       height: 16px;
@@ -137,19 +135,16 @@
                       animation: skeleton-pulse 1.5s ease-in-out infinite;
                     "
                   ></div>
-                </td>
+                </Table.Cell>
               {/each}
-            </tr>
+            </Table.Row>
           {/each}
         {:else if data.length === 0}
           <!-- Empty state -->
-          <tr>
-            <td
+          <Table.Row>
+            <Table.Cell
               colspan={columns.length}
-              style="
-                padding: 48px 24px;
-                text-align: center;
-              "
+              style="padding: 48px 24px; text-align: center;"
             >
               <p
                 style="
@@ -171,20 +166,17 @@
               >
                 Não há dados para exibir com os filtros aplicados.
               </p>
-            </td>
-          </tr>
+            </Table.Cell>
+          </Table.Row>
         {:else}
           {#each visibleRows as row}
-            <tr
-              style="
-                border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08));
-                transition: background 0.15s;
-              "
+            <Table.Row
+              style="border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08)); transition: background 0.15s;"
               onmouseenter={(e) => (e.currentTarget.style.background = 'var(--color-surface-elevated, #141420)')}
               onmouseleave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
               {#each row.getVisibleCells() as cell}
-                <td
+                <Table.Cell
                   style="
                     padding: 12px 16px;
                     font-size: 0.875rem;
@@ -198,13 +190,13 @@
                   {:else}
                     {String(cell.getValue() ?? '')}
                   {/if}
-                </td>
+                </Table.Cell>
               {/each}
-            </tr>
+            </Table.Row>
           {/each}
         {/if}
-      </tbody>
-    </table>
+      </Table.Body>
+    </Table.Root>
   </div>
 
   <!-- Pagination -->
