@@ -1,1 +1,1 @@
-<meta http-equiv="refresh" content="0; url=/dashboard" />
+<!-- Redireciona para /dashboard via +page.server.ts -->
