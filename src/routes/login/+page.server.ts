@@ -3,7 +3,7 @@ import { fail } from '@sveltejs/kit';
 import { env } from '$core/config/env';
 
 export const actions: Actions = {
-  default: async ({ request, cookies }) => {
+  login: async ({ request, cookies }) => {
     const data = await request.formData();
     const email = String(data.get('email') ?? '');
     const password = String(data.get('password') ?? '');
