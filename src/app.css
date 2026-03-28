@@ -1,3 +1,7 @@
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/outfit";
+@import "@fontsource-variable/syne";
+@import "@fontsource-variable/jetbrains-mono";
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -28,9 +32,10 @@
   --color-info: #01FAFB;
 
   /* Typography */
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Outfit', sans-serif;
-  --font-mono: 'Outfit', monospace;
+  --font-display: 'Space Grotesk Variable', sans-serif;
+  --font-body: 'Outfit Variable', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+  --font-syne: 'Syne Variable', sans-serif;
 
   /* Border Radius */
   --radius-sm: 6px;

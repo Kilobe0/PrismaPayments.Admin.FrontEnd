@@ -27,6 +27,10 @@
     "vitest": "^2.1.9"
   },
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource-variable/outfit": "^5.2.8",
+    "@fontsource-variable/space-grotesk": "^5.2.10",
+    "@fontsource-variable/syne": "^5.2.7",
     "@internationalized/date": "^3.12.0",
     "@tanstack/table-core": "^8.21.3",
     "bits-ui": "^2.16.3",
