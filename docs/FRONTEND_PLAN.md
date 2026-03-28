@@ -98,7 +98,7 @@ src/
 │   │   │   ├── withdrawals/                    # Solicitação de saques
 │   │   │   └── billing/                        # Resumo de billing
 │   │   ├── transactions/                       # Listagem de transações
-│   │   ├── checkout_builder/                   # Feature group
+│   │   ├── checkout/                            # Feature group
 │   │   │   ├── links/                          # CRUD de links
 │   │   │   └── products/                       # Gestão de produtos
 │   │   ├── integration/                        # Feature group

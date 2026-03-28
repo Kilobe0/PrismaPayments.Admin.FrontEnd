@@ -13,16 +13,17 @@
 4. [Autenticação e Roles](#4-autenticação-e-roles)
 5. [Features](#5-features)
    - 5.1 [Dashboard Admin](#51-dashboard-admin)
-   - 5.2 [Gestão de Merchants](#52-gestão-de-merchants)
-   - 5.3 [Verificação / KYC Review](#53-verificação--kyc-review)
-   - 5.4 [Transações (Pagamentos e Saques)](#54-transações)
-   - 5.5 [Disputas (Chargebacks)](#55-disputas)
-   - 5.6 [Regras de Taxas (Fees)](#56-regras-de-taxas)
-   - 5.7 [Gestão de Admins](#57-gestão-de-admins)
-   - 5.8 [Auditoria (Audit Log)](#58-auditoria)
-   - 5.9 [Provedores (Providers)](#59-provedores)
-   - 5.10 [Diagnósticos (Logs HTTP)](#510-diagnósticos)
-   - 5.11 [Configuração da Plataforma](#511-configuração-da-plataforma)
+   - 5.2 [Gestão de Tenants (Multi-tenant)](#52-gestão-de-tenants)
+   - 5.3 [Gestão de Merchants](#53-gestão-de-merchants)
+   - 5.4 [Verificação / KYC Review](#54-verificação--kyc-review)
+   - 5.5 [Transações (Pagamentos e Saques)](#55-transações)
+   - 5.6 [Disputas (Chargebacks)](#56-disputas)
+   - 5.7 [Regras de Taxas (Fees)](#57-regras-de-taxas)
+   - 5.8 [Gestão de Admins](#58-gestão-de-admins)
+   - 5.9 [Auditoria (Audit Log)](#59-auditoria)
+   - 5.10 [Provedores (Providers)](#510-provedores)
+   - 5.11 [Diagnósticos (Logs HTTP)](#511-diagnósticos)
+   - 5.12 [Configuração da Plataforma](#512-configuração-da-plataforma)
 6. [Contrato de API (RouteMessages)](#6-contrato-de-api-routemessages)
 7. [Enums e Constantes](#7-enums-e-constantes)
 8. [Controle de Acesso por Role](#8-controle-de-acesso-por-role)
@@ -61,8 +62,9 @@ src/
 │   ├── features/
 │   │   ├── auth/                        # Login admin
 │   │   ├── dashboard/                   # Métricas globais da plataforma
+│   │   ├── tenants/                     # Gestão multi-tenant (CRUD)
 │   │   ├── merchants/
-│   │   │   ├── management/              # CRUD de merchants
+│   │   │   ├── management/              # CRUD de merchants (scoped por tenant)
 │   │   │   ├── verification/            # Review de KYC
 │   │   │   └── credentials/             # Credenciais de API (criação por admin)
 │   │   ├── transactions/
@@ -125,10 +127,19 @@ Interceptors:
 
 ```
 AUTH_ADMIN_LOGIN       = /api/v1/auth/admin/login
+AUTH_ADMIN_2FA_SETUP   = /api/v1/auth/admin/2fa/setup
+AUTH_ADMIN_2FA_VERIFY  = /api/v1/auth/admin/2fa/verify
+AUTH_ADMIN_2FA_DISABLE = /api/v1/auth/admin/2fa/disable
+AUTH_ADMIN_2FA_LOGIN   = /api/v1/auth/admin/2fa/login
+AUTH_ADMIN_FORGOT_PW   = /api/v1/auth/admin/forgot-password
+AUTH_ADMIN_RESET_PW    = /api/v1/auth/admin/reset-password
 AUTH_REFRESH           = /api/v1/auth/merchants/refresh   // Mesmo endpoint de refresh
 
 ADMIN_USERS            = /api/v1/admin/users
+ADMIN_TENANTS          = /api/v1/admin/tenants
 ADMIN_MERCHANTS        = /api/v1/admin/merchants
+ADMIN_MERCHANT_CREDS   = /api/v1/admin/merchants/{id}/credentials
+ADMIN_MERCHANT_DOCS    = /api/v1/admin/merchants/{id}/documents
 ADMIN_PAYMENTS         = /api/v1/admin/payments
 ADMIN_WITHDRAWALS      = /api/v1/admin/withdrawals
 ADMIN_DISPUTES         = /api/v1/admin/disputes
@@ -189,13 +200,161 @@ POST /api/v1/auth/admin/login
 }
 ```
 
+**Response (200 — 2FA desabilitado):**
+```typescript
+{
+  data: {
+    accessToken: string
+    refreshToken: string
+    expiresIn: number
+    tenantId: string
+  }
+}
+```
+
+**Response (200 — 2FA habilitado):**
+```typescript
+{
+  data: {
+    requiresTwoFactor: true
+  }
+}
+```
+
+Se `requiresTwoFactor: true`, redirecionar para tela de 2FA e usar o endpoint de login 2FA.
+
 **Fluxo pós-login:**
 1. Salvar tokens em secure storage
 2. Decodificar JWT para extrair `role` (SUPER_ADMIN, ADMIN, SUPPORT, VIEWER)
 3. Redirecionar para `/dashboard`
 4. Aplicar restrições de UI baseadas no role
 
-### 4.2 Roles do Admin
+### 4.2 Autenticação de Dois Fatores (2FA — TOTP)
+
+O admin pode ativar 2FA com aplicativo autenticador (Google Authenticator, Authy, etc.).
+
+#### 4.2.1 Setup 2FA
+
+```
+POST /api/v1/auth/admin/2fa/setup
+```
+
+**Auth:** Bearer Token (Admin autenticado).
+
+**Response (200):**
+```typescript
+{
+  data: {
+    secret: string          // Base32 secret para inserção manual
+    otpAuthUri: string      // URI otpauth:// para gerar QR code
+    message: string
+  }
+}
+```
+
+**UI:** Exibir QR code gerado a partir do `otpAuthUri` e campo para digitar o código de confirmação.
+
+#### 4.2.2 Verificar e Ativar 2FA
+
+```
+POST /api/v1/auth/admin/2fa/verify
+```
+
+**Auth:** Bearer Token (Admin autenticado).
+
+**Request:**
+```typescript
+{
+  code: string              // 6 dígitos do app autenticador
+}
+```
+
+**Response (200):** `{ data: { message: "2FA ativado com sucesso" } }`
+
+#### 4.2.3 Desativar 2FA
+
+```
+POST /api/v1/auth/admin/2fa/disable
+```
+
+**Auth:** Bearer Token (Admin autenticado).
+
+**Request:**
+```typescript
+{
+  code: string              // 6 dígitos para confirmar desativação
+}
+```
+
+**Response (200):** `{ data: { message: "2FA desativado com sucesso" } }`
+
+#### 4.2.4 Login com 2FA
+
+```
+POST /api/v1/auth/admin/2fa/login
+```
+
+**Request:**
+```typescript
+{
+  email: string
+  password: string
+  code: string              // 6 dígitos TOTP
+}
+```
+
+**Response (200):** Mesma resposta do login normal (accessToken, refreshToken, expiresIn, tenantId).
+
+**Fluxo completo de login com 2FA:**
+1. Admin faz login normal (`POST /auth/admin/login`)
+2. Se resposta contém `requiresTwoFactor: true` → redirecionar para tela 2FA
+3. Admin insere código do app autenticador
+4. Frontend chama `POST /auth/admin/2fa/login` com email + senha + código
+5. Se código válido → recebe tokens normalmente
+
+### 4.3 Forgot Password (Reset de Senha)
+
+#### 4.3.1 Solicitar Reset
+
+```
+POST /api/v1/auth/admin/forgot-password
+```
+
+**Request:**
+```typescript
+{
+  email: string
+}
+```
+
+**Response (200):** `{ data: { message: "Se o email estiver cadastrado, um link de redefinição será enviado" } }`
+
+> Sempre retorna 200 para evitar enumeração de emails.
+
+#### 4.3.2 Confirmar Reset
+
+```
+POST /api/v1/auth/admin/reset-password
+```
+
+**Request:**
+```typescript
+{
+  token: string             // Token recebido por email
+  newPassword: string       // Mínimo 8 caracteres
+}
+```
+
+**Response (200):** `{ data: { message: "Senha redefinida com sucesso. Faça login novamente." } }`
+
+**Fluxo:**
+1. Admin clica "Esqueci minha senha" na tela de login
+2. Insere email → `POST /auth/admin/forgot-password`
+3. Recebe email com token/código
+4. Insere token + nova senha → `POST /auth/admin/reset-password`
+5. Todas as sessões são revogadas → redirecionar para login
+
+### 4.4 Roles do Admin
 
 | Role | Nível | Descrição |
 |------|-------|-----------|
@@ -206,7 +365,7 @@ POST /api/v1/auth/admin/login
 
 **O JWT contém o role.** Decodificar o token (sem verificar assinatura, pois o backend faz isso) para determinar o role e exibir/ocultar ações na UI.
 
-### 4.3 Refresh e Logout
+### 4.5 Refresh e Logout
 
 Mesmo mecanismo do Seller — refresh automático via interceptor, logout limpa tokens.
 
@@ -247,9 +406,180 @@ GET /api/v1/dashboard/admin
 
 ---
 
-### 5.2 Gestão de Merchants
+### 5.2 Gestão de Tenants (Multi-tenant)
 
-#### 5.2.1 Listar Merchants
+O Prisma Payments é multi-tenant. Cada tenant representa uma instância/marca separada da plataforma, com branding próprio (cores, logo, domínio customizado). Merchants pertencem a um tenant e são isolados entre si.
+
+#### 5.2.1 Listar Tenants
+
+```
+GET /api/v1/admin/tenants
+```
+
+**Role mínimo:** SUPER_ADMIN
+
+**Query Params:**
+| Param | Tipo | Descrição |
+|-------|------|-----------|
+| `status` | string? | ACTIVE, SUSPENDED, BLOCKED |
+| `skip` | int | Offset |
+| `limit` | int | Itens por página |
+
+**Response:**
+```typescript
+{
+  data: {
+    items: TenantResponse[]
+    total: number
+    skip: number
+    limit: number
+  }
+}
+```
+
+**TenantResponse:**
+```typescript
+{
+  id: string
+  name: string
+  slug: string                           // Identificador único URL-safe
+  status: "ACTIVE" | "SUSPENDED" | "BLOCKED"
+  clientKey: string                      // Chave pública do tenant
+  clientSecretLast4: string              // Últimos 4 caracteres do client secret
+  branding: TenantBrandingResponse
+  createdAt: string
+  updatedAt: string
+}
+```
+
+**TenantBrandingResponse:**
+```typescript
+{
+  displayName: string | null             // Nome de exibição (pode diferir do name)
+  logoUrl: string | null
+  faviconUrl: string | null
+  primaryColor: string | null            // Hex (ex: "#6366f1")
+  secondaryColor: string | null
+  accentColor: string | null
+  backgroundColor: string | null
+  surfaceColor: string | null
+  textColor: string | null
+  mutedTextColor: string | null
+  fontFamily: string | null              // Ex: "Inter, sans-serif"
+  supportEmail: string | null
+  supportPhone: string | null
+  websiteUrl: string | null
+  checkoutHeadline: string | null        // Título na página de checkout
+  checkoutDescription: string | null     // Descrição na página de checkout
+  customCss: string | null               // CSS customizado (injetado no checkout)
+  customDomain: string | null            // Domínio customizado (ex: "pay.marca.com")
+}
+```
+
+#### 5.2.2 Detalhe do Tenant
+
+```
+GET /api/v1/admin/tenants/{id}
+```
+
+**Role mínimo:** SUPER_ADMIN
+
+**Response:** `TenantResponse` (mesma estrutura da listagem).
+
+#### 5.2.3 Criar Tenant
+
+```
+POST /api/v1/admin/tenants
+```
+
+**Role mínimo:** SUPER_ADMIN
+
+**Request:**
+```typescript
+{
+  name: string                           // Nome do tenant
+  slug: string                           // Slug URL-safe (único)
+  branding: {                            // Opcional
+    displayName: string | null
+    logoUrl: string | null
+    faviconUrl: string | null
+    primaryColor: string | null
+    secondaryColor: string | null
+    accentColor: string | null
+    backgroundColor: string | null
+    surfaceColor: string | null
+    textColor: string | null
+    mutedTextColor: string | null
+    fontFamily: string | null
+    supportEmail: string | null
+    supportPhone: string | null
+    websiteUrl: string | null
+    checkoutHeadline: string | null
+    checkoutDescription: string | null
+    customCss: string | null
+    customDomain: string | null
+  } | null
+}
+```
+
+**Response (201):**
+```typescript
+{
+  data: {
+    id: string
+    name: string
+    slug: string
+    status: string
+    clientKey: string
+    clientSecret: string                 // ⚠️ Retornado APENAS nesta resposta — formato: ts_live_{clientKey}_{hex64}
+    clientSecretLast4: string
+    branding: TenantBrandingResponse
+    createdAt: string
+  }
+}
+```
+
+**UI:** Após criação, exibir modal com `clientKey` e `clientSecret`. Alertar que o `clientSecret` não poderá ser visualizado novamente.
+
+#### 5.2.4 Atualizar Tenant
+
+```
+PUT /api/v1/admin/tenants/{id}
+```
+
+**Role mínimo:** SUPER_ADMIN
+
+**Request (todos opcionais):**
+```typescript
+{
+  name: string | null
+  slug: string | null
+  status: "ACTIVE" | "SUSPENDED" | "BLOCKED" | null
+  branding: TenantBrandingRequest | null    // Mesma estrutura do request de criação
+}
+```
+
+**Response:** `TenantResponse` atualizado.
+
+#### 5.2.5 UI Sugerida — Gestão de Tenants
+
+- **Lista:** tabela com (nome, slug, status, clientKey, data de criação)
+- **Filtro:** tabs por status (Ativo, Suspenso, Bloqueado)
+- **Detalhe:** página com:
+  - Informações gerais (nome, slug, clientKey, secretLast4)
+  - Preview de branding (cores, logo, fontes)
+  - Formulário de edição de branding com preview ao vivo
+  - Alterar status (Suspender/Bloquear/Reativar)
+  - Lista de merchants vinculados ao tenant (filtrar lista de merchants por tenantId)
+- **Criação:** formulário com nome + slug + branding opcional. Modal de confirmação com clientSecret após criação
+
+---
+
+### 5.3 Gestão de Merchants
+
+#### 5.3.1 Listar Merchants
+
+> **Nota multi-tenant:** A listagem retorna merchants de todos os tenants. Use o campo `tenantId` no response para identificar a qual tenant cada merchant pertence.
 
 ```
 GET /api/v1/admin/merchants
@@ -279,6 +609,7 @@ GET /api/v1/admin/merchants
 ```typescript
 {
   id: string
+  tenantId: string                       // ID do tenant ao qual o merchant pertence
   legalName: string
   tradeName: string
   documentNumber: string
@@ -292,15 +623,48 @@ GET /api/v1/admin/merchants
 }
 ```
 
-#### 5.2.2 Detalhe do Merchant
+#### 5.3.2 Detalhe do Merchant
 
 ```
 GET /api/v1/admin/merchants/{id}
 ```
 
-**Response:** `MerchantAdminResponse` com dados adicionais de saldo.
+**Response (completa):**
+```typescript
+{
+  data: {
+    id: string
+    tenantId: string
+    legalName: string
+    tradeName: string
+    documentNumber: string
+    documentType: "CPF" | "CNPJ"
+    email: string
+    phone: string
+    status: "PENDING" | "ACTIVE" | "SUSPENDED" | "BLOCKED"
+    verificationStatus: "UNVERIFIED" | "PENDING_REVIEW" | "VERIFIED" | "REJECTED"
+    settings: {
+      webhookUrl: string | null
+      twoFactorEnabled: boolean
+      dailyWithdrawalLimit: number       // Centavos
+      autoWithdrawalEnabled: boolean
+      autoWithdrawalThreshold: number | null  // Centavos
+    }
+    balance: {                             // null se merchant ainda não tiver saldo criado
+      available: number                    // Centavos — saldo disponível para saque
+      pending: number                      // Centavos — saldo pendente (aguardando compensação)
+      retained: number                     // Centavos — saldo retido (disputas, etc.)
+      currency: string                     // Ex: "BRL"
+    } | null
+    createdAt: string
+    updatedAt: string
+  }
+}
+```
 
-#### 5.2.3 Criar Merchant (pelo Admin)
+> **Nota:** Este endpoint **não** retorna documentos KYC nem credenciais de API. Ver seções 5.3.8 e 5.3.9 para esses dados.
+
+#### 5.3.3 Criar Merchant (pelo Admin)
 
 ```
 POST /api/v1/admin/merchants
@@ -311,6 +675,7 @@ POST /api/v1/admin/merchants
 **Request:**
 ```typescript
 {
+  tenantId: string                       // ⚠️ Obrigatório — ID do tenant ao qual o merchant será vinculado
   legalName: string
   tradeName: string
   documentNumber: string
@@ -323,7 +688,28 @@ POST /api/v1/admin/merchants
 }
 ```
 
-#### 5.2.4 Alterar Status do Merchant
+**Response (201):**
+```typescript
+{
+  data: {
+    id: string
+    tenantId: string
+    legalName: string
+    tradeName: string
+    documentNumber: string
+    documentType: string
+    email: string
+    phone: string
+    status: string
+    verificationStatus: string
+    createdAt: string
+  }
+}
+```
+
+**UI:** O formulário de criação deve ter um dropdown/select para escolher o tenant (carregar via `GET /api/v1/admin/tenants`).
+
+#### 5.3.4 Alterar Status do Merchant
 
 ```
 PUT /api/v1/admin/merchants/{id}/status
@@ -348,7 +734,7 @@ PUT /api/v1/admin/merchants/{id}/status
 
 **UI:** dialog de confirmação com campo de motivo obrigatório.
 
-#### 5.2.5 Review de Verificação KYC
+#### 5.3.5 Review de Verificação KYC
 
 ```
 PUT /api/v1/admin/merchants/{id}/verification
@@ -366,7 +752,7 @@ PUT /api/v1/admin/merchants/{id}/verification
 
 **UI:** na página de detalhe do merchant, exibir todos os documentos enviados (com preview/download), e botões "Aprovar" / "Rejeitar" com campo de notas.
 
-#### 5.2.6 Atualizar Settings do Merchant (Admin)
+#### 5.3.6 Atualizar Settings do Merchant (Admin)
 
 ```
 PUT /api/v1/admin/merchants/{id}/settings
@@ -385,7 +771,7 @@ PUT /api/v1/admin/merchants/{id}/settings
 }
 ```
 
-#### 5.2.7 Criar Credencial para Merchant (Admin)
+#### 5.3.7 Criar Credencial para Merchant (Admin)
 
 ```
 POST /api/v1/admin/merchants/{id}/credentials
@@ -401,9 +787,87 @@ POST /api/v1/admin/merchants/{id}/credentials
 }
 ```
 
-**Response:** inclui `secretKey` — mostrar apenas uma vez (mesma regra do Seller).
+**Response (201):**
+```typescript
+{
+  data: {
+    id: string
+    tenantId: string
+    merchantId: string
+    label: string
+    publicKey: string
+    secretKey: string                    // ⚠️ Retornado APENAS nesta resposta — nunca mais
+    environment: "LIVE" | "TEST"
+    createdAt: string
+  }
+}
+```
 
-#### 5.2.8 UI Sugerida — Gestão de Merchants
+**UI:** Exibir modal com `publicKey` e `secretKey` após criação. Alerta de que o `secretKey` não poderá ser visualizado novamente.
+
+#### 5.3.8 Listar Credenciais do Merchant (Admin)
+
+```
+GET /api/v1/admin/merchants/{id}/credentials
+```
+
+**Role mínimo:** SUPPORT
+
+**Response (200):**
+```typescript
+{
+  data: {
+    items: [
+      {
+        id: string
+        label: string
+        publicKey: string
+        secretKeyLast4: string            // Apenas últimos 4 caracteres
+        environment: "LIVE" | "TEST"
+        isActive: boolean
+        lastUsedAt: string | null
+        createdAt: string
+      }
+    ]
+    total: number
+  }
+}
+```
+
+**UI:** Tabela na aba "Credenciais" do detalhe do merchant. Exibir publicKey truncada, environment como badge, e lastUsedAt formatado.
+
+#### 5.3.9 Documentos KYC do Merchant (Admin)
+
+```
+GET /api/v1/admin/merchants/{id}/documents
+```
+
+**Role mínimo:** SUPPORT
+
+**Response (200):**
+```typescript
+{
+  data: {
+    items: [
+      {
+        id: string
+        documentType: "IDENTITY_FRONT" | "IDENTITY_BACK" | "SELFIE" | "PROOF_OF_ADDRESS" | "ARTICLES_OF_INCORPORATION" | "OTHER"
+        fileUrl: string                    // URL do arquivo para preview/download
+        status: "PENDING" | "APPROVED" | "REJECTED"
+        rejectionReason: string | null
+        reviewedBy: string | null          // ID do admin que revisou
+        reviewedAt: string | null
+        createdAt: string
+      }
+    ]
+    total: number
+  }
+}
+```
+
+**UI:** Na aba "KYC" do detalhe do merchant — grid de documentos com preview de imagem, status badge (PENDING=amarelo, APPROVED=verde, REJECTED=vermelho), e botões de aprovação/rejeição.
+
+#### 5.3.10 UI Sugerida — Gestão de Merchants
 
 - **Lista:** tabela com (nome, documento, email, status, verificação, data de cadastro)
 - **Filtros rápidos:** badges/tabs por status (Pendente, Ativo, Suspenso, Bloqueado)
@@ -418,9 +882,9 @@ POST /api/v1/admin/merchants/{id}/credentials
 
 ---
 
-### 5.3 Verificação / KYC Review
+### 5.4 Verificação / KYC Review
 
-Integrado na gestão de merchants (ver seção 5.2.5).
+Integrado na gestão de merchants (ver seção 5.3.5 para aprovação/rejeição e seção 5.3.9 para documentos KYC).
 
 **Fluxo dedicado:**
 - Na sidebar, item "Verificações Pendentes" que filtra por `verification=PENDING_REVIEW`
@@ -429,9 +893,9 @@ Integrado na gestão de merchants (ver seção 5.2.5).
 
 ---
 
-### 5.4 Transações
+### 5.5 Transações
 
-#### 5.4.1 Pagamentos Cross-Merchant
+#### 5.5.1 Pagamentos Cross-Merchant
 
 ```
 GET /api/v1/admin/payments
@@ -506,7 +970,7 @@ GET /api/v1/admin/payments
 }
 ```
 
-#### 5.4.2 Saques Cross-Merchant
+#### 5.5.2 Saques Cross-Merchant
 
 ```
 GET /api/v1/admin/withdrawals
@@ -566,9 +1030,9 @@ GET /api/v1/admin/withdrawals
 
 ---
 
-### 5.5 Disputas
+### 5.6 Disputas
 
-#### 5.5.1 Listar Disputas
+#### 5.6.1 Listar Disputas
 
 ```
 GET /api/v1/admin/disputes
@@ -597,7 +1061,7 @@ GET /api/v1/admin/disputes
 }
 ```
 
-#### 5.5.2 Resolver Disputa
+#### 5.6.2 Resolver Disputa
 
 ```
 PUT /api/v1/admin/disputes/{id}
@@ -622,9 +1086,9 @@ PUT /api/v1/admin/disputes/{id}
 
 ---
 
-### 5.6 Regras de Taxas
+### 5.7 Regras de Taxas
 
-#### 5.6.1 Listar Regras
+#### 5.7.1 Listar Regras
 
 ```
 GET /api/v1/fees/rules?page={page}&pageSize={pageSize}
@@ -659,7 +1123,7 @@ GET /api/v1/fees/rules?page={page}&pageSize={pageSize}
 }
 ```
 
-#### 5.6.2 Criar Regra
+#### 5.7.2 Criar Regra
 
 ```
 POST /api/v1/fees/rules
@@ -678,7 +1142,7 @@ POST /api/v1/fees/rules
 }
 ```
 
-#### 5.6.3 Atualizar Regra
+#### 5.7.3 Atualizar Regra
 
 ```
 PUT /api/v1/fees/rules/{id}
@@ -697,13 +1161,13 @@ PUT /api/v1/fees/rules/{id}
 }
 ```
 
-#### 5.6.4 Excluir Regra
+#### 5.7.4 Excluir Regra
 
 ```
 DELETE /api/v1/fees/rules/{id}
 ```
 
-#### 5.6.5 Regras de um Merchant Específico
+#### 5.7.5 Regras de um Merchant Específico
 
 ```
 GET /api/v1/fees/merchants/{merchantId}/rules
@@ -711,7 +1175,7 @@ GET /api/v1/fees/merchants/{merchantId}/rules
 
 Retorna lista de `FeeRuleResponse` ativas para aquele merchant (incluindo globais e específicas).
 
-#### 5.6.6 Simular Taxa
+#### 5.7.6 Simular Taxa
 
 ```
 POST /api/v1/fees/simulate
@@ -753,9 +1217,9 @@ POST /api/v1/fees/simulate
 
 ---
 
-### 5.7 Gestão de Admins
+### 5.8 Gestão de Admins
 
-#### 5.7.1 Criar Admin
+#### 5.8.1 Criar Admin
 
 ```
 POST /api/v1/admin/users
@@ -773,7 +1237,7 @@ POST /api/v1/admin/users
 }
 ```
 
-#### 5.7.2 Listar Admins
+#### 5.8.2 Listar Admins
 
 ```
 GET /api/v1/admin/users
@@ -809,13 +1273,13 @@ GET /api/v1/admin/users
 }
 ```
 
-#### 5.7.3 Obter Admin
+#### 5.8.3 Obter Admin
 
 ```
 GET /api/v1/admin/users/{id}
 ```
 
-#### 5.7.4 Atualizar Admin
+#### 5.8.4 Atualizar Admin
 
 ```
 PUT /api/v1/admin/users/{id}
@@ -832,7 +1296,7 @@ PUT /api/v1/admin/users/{id}
 }
 ```
 
-#### 5.7.5 Desativar Admin
+#### 5.8.5 Desativar Admin
 
 ```
 DELETE /api/v1/admin/users/{id}
@@ -851,7 +1315,7 @@ DELETE /api/v1/admin/users/{id}
 
 ---
 
-### 5.8 Auditoria
+### 5.9 Auditoria
 
 ```
 GET /api/v1/admin/audit
@@ -912,7 +1376,7 @@ GET /api/v1/admin/audit
 
 ---
 
-### 5.9 Provedores
+### 5.10 Provedores
 
 ```
 GET /api/v1/admin/providers
@@ -940,9 +1404,9 @@ GET /api/v1/admin/providers
 
 ---
 
-### 5.10 Diagnósticos
+### 5.11 Diagnósticos
 
-#### 5.10.1 Listar Logs HTTP
+#### 5.11.1 Listar Logs HTTP
 
 ```
 GET /api/v1/diagnostics/logs
@@ -990,7 +1454,7 @@ GET /api/v1/diagnostics/logs
 }
 ```
 
-#### 5.10.2 Detalhe do Log
+#### 5.11.2 Detalhe do Log
 
 ```
 GET /api/v1/diagnostics/logs/{id}
@@ -1025,7 +1489,7 @@ GET /api/v1/diagnostics/logs/{id}
 }
 ```
 
-#### 5.10.3 Logs por Trace ID
+#### 5.11.3 Logs por Trace ID
 
 ```
 GET /api/v1/diagnostics/logs/trace/{traceId}
@@ -1033,7 +1497,7 @@ GET /api/v1/diagnostics/logs/trace/{traceId}
 
 Retorna todos os logs com o mesmo `traceId` (útil para rastrear uma requisição inteira).
 
-#### 5.10.4 Estatísticas
+#### 5.11.4 Estatísticas
 
 ```
 GET /api/v1/diagnostics/logs/stats
@@ -1049,7 +1513,7 @@ GET /api/v1/diagnostics/logs/stats
 }
 ```
 
-#### 5.10.5 Purgar Logs
+#### 5.11.5 Purgar Logs
 
 ```
 DELETE /api/v1/diagnostics/logs?olderThanDays={days}
@@ -1068,7 +1532,7 @@ DELETE /api/v1/diagnostics/logs?olderThanDays={days}
 
 ---
 
-### 5.11 Configuração da Plataforma
+### 5.12 Configuração da Plataforma
 
 ```
 GET /api/v1/admin/config
@@ -1099,6 +1563,13 @@ Idêntico ao Seller. Toda resposta segue o envelope:
 ---
 
 ## 7. Enums e Constantes
+
+### Status de Tenant
+| Valor | Cor sugerida | Descrição |
+|-------|-------------|-----------|
+| `ACTIVE` | Verde | Ativo |
+| `SUSPENDED` | Laranja | Suspenso |
+| `BLOCKED` | Vermelho | Bloqueado |
 
 ### Status de Merchant
 | Valor | Cor sugerida | Descrição |
@@ -1204,6 +1675,13 @@ Idêntico ao Seller. Toda resposta segue o envelope:
 | `ARTICLES_OF_INCORPORATION` | Contrato social |
 | `OTHER` | Outro |
 
+### Status de Documento KYC
+| Valor | Cor sugerida | Descrição |
+|-------|-------------|-----------|
+| `PENDING` | Amarelo | Aguardando revisão |
+| `APPROVED` | Verde | Aprovado pelo admin |
+| `REJECTED` | Vermelho | Rejeitado pelo admin |
+
 ### Tipo de Ambiente (API Keys)
 | Valor | Descrição |
 |-------|-----------|
@@ -1252,6 +1730,10 @@ A UI deve ocultar ações e menus baseados no role do admin logado:
 | Feature / Ação | VIEWER | SUPPORT | ADMIN | SUPER_ADMIN |
 |----------------|--------|---------|-------|-------------|
 | Dashboard (visualizar) | ✅ | ✅ | ✅ | ✅ |
+| Tenants (listar) | ❌ | ❌ | ❌ | ✅ |
+| Tenants (detalhe) | ❌ | ❌ | ❌ | ✅ |
+| Tenants (criar) | ❌ | ❌ | ❌ | ✅ |
+| Tenants (atualizar) | ❌ | ❌ | ❌ | ✅ |
 | Merchants (listar) | ✅ | ✅ | ✅ | ✅ |
 | Merchants (detalhe) | ✅ | ✅ | ✅ | ✅ |
 | Merchants (criar) | ❌ | ❌ | ✅ | ✅ |
@@ -1259,6 +1741,8 @@ A UI deve ocultar ações e menus baseados no role do admin logado:
 | Merchants (review KYC) | ❌ | ✅ | ✅ | ✅ |
 | Merchants (alterar settings) | ❌ | ❌ | ✅ | ✅ |
 | Merchants (criar credentials) | ❌ | ❌ | ✅ | ✅ |
+| Merchants (listar credentials) | ❌ | ✅ | ✅ | ✅ |
+| Merchants (ver documentos KYC) | ❌ | ✅ | ✅ | ✅ |
 | Transações (listar) | ✅ | ✅ | ✅ | ✅ |
 | Disputas (listar) | ✅ | ✅ | ✅ | ✅ |
 | Disputas (resolver) | ❌ | ✅ | ✅ | ✅ |
@@ -1285,8 +1769,17 @@ A UI deve ocultar ações e menus baseados no role do admin logado:
 
 ```
 /login                              → Tela de login admin
+/login/2fa                          → Tela de código 2FA (após login com 2FA ativo)
+/forgot-password                    → Solicitar reset de senha
+/reset-password                     → Confirmar reset de senha (com token)
 
 /dashboard                          → Dashboard global
+
+/settings/security                  → Configurações de 2FA do admin logado
+
+/tenants                            → Lista de tenants (SUPER_ADMIN)
+/tenants/:id                        → Detalhe do tenant
+/tenants/new                        → Criar tenant (SUPER_ADMIN)
 
 /merchants                          → Lista de merchants
 /merchants/:id                      → Detalhe do merchant (com abas)
@@ -1326,6 +1819,7 @@ A UI deve ocultar ações e menus baseados no role do admin logado:
 **Route Guards:**
 - `/login` → redirecionar para `/dashboard` se já autenticado
 - Todas as outras rotas → redirecionar para `/login` se não autenticado
+- Rotas de tenants → verificar `SUPER_ADMIN` (todas as operações)
 - Rotas de admin-users → verificar `SUPER_ADMIN`
 - Rotas de diagnósticos → verificar `ADMIN+`
 - Ações de escrita → verificar role mínimo conforme tabela da seção 8
@@ -1336,6 +1830,7 @@ A UI deve ocultar ações e menus baseados no role do admin logado:
 
 ```
 📊 Dashboard
+🏢 Tenants                    ← só SUPER_ADMIN
 👥 Merchants
    ├── Todos os Merchants
    └── Verificações Pendentes
@@ -1356,3 +1851,23 @@ A UI deve ocultar ações e menus baseados no role do admin logado:
 ---
 
 > **Nota final:** Esta documentação cobre todos os endpoints que o Frontend Admin consome. Para dúvidas sobre a arquitetura de pastas e padrões de código, consultar `murillo's-architecture-frontend.md`. Para regras inegociáveis do projeto, consultar `PROJECT_RULES.md`.
+
+---
+
+## Apêndice: Endpoints Implementados (Changelog)
+
+Endpoints adicionados ao backend que antes eram pendentes:
+
+| Endpoint | Seção | Status |
+|----------|-------|--------|
+| `GET /api/v1/admin/merchants/{id}/credentials` | 5.3.8 | Implementado |
+| `GET /api/v1/admin/merchants/{id}/documents` | 5.3.9 | Implementado |
+| `POST /api/v1/auth/admin/2fa/setup` | 4.2.1 | Implementado |
+| `POST /api/v1/auth/admin/2fa/verify` | 4.2.2 | Implementado |
+| `POST /api/v1/auth/admin/2fa/disable` | 4.2.3 | Implementado |
+| `POST /api/v1/auth/admin/2fa/login` | 4.2.4 | Implementado |
+| `POST /api/v1/auth/admin/forgot-password` | 4.3.1 | Implementado |
+| `POST /api/v1/auth/admin/reset-password` | 4.3.2 | Implementado |
+
+Todos os endpoints necessários para o Frontend Admin estão disponíveis no backend.
+
