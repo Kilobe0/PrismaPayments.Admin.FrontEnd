@@ -31,12 +31,74 @@
 
   const service = new DashboardService(new DashboardRepository());
 
+  // DEV: mock data when backend is unavailable
+  const MOCK_METRICS: AdminMetrics = {
+    totalVolume: 158432900,
+    totalTransactions: 4821,
+    todayVolume: 9876500,
+    todayTransactions: 143,
+    availableBalance: 72300000,
+    pendingBalance: 8450000,
+    totalFeesCollected: 3168658,
+    totalMerchants: 37,
+    openDisputes: 3,
+    pendingKycCount: 7
+  };
+
+  const MOCK_CHART: Record<DashboardPeriod, DashboardChartData> = {
+    today: {
+      period: 'today',
+      points: [
+        { label: '08h', volume: 120000, transactions: 8 },
+        { label: '10h', volume: 340000, transactions: 21 },
+        { label: '12h', volume: 890000, transactions: 54 },
+        { label: '14h', volume: 1230000, transactions: 31 },
+        { label: '16h', volume: 760000, transactions: 19 },
+        { label: '18h', volume: 430000, transactions: 10 }
+      ]
+    },
+    week: {
+      period: 'week',
+      points: [
+        { label: 'Seg', volume: 1200000, transactions: 89 },
+        { label: 'Ter', volume: 1870000, transactions: 124 },
+        { label: 'Qua', volume: 2340000, transactions: 198 },
+        { label: 'Qui', volume: 980000, transactions: 67 },
+        { label: 'Sex', volume: 3100000, transactions: 241 },
+        { label: 'Sáb', volume: 430000, transactions: 28 },
+        { label: 'Dom', volume: 210000, transactions: 14 }
+      ]
+    },
+    month: {
+      period: 'month',
+      points: [
+        { label: '01/03', volume: 4200000, transactions: 310 },
+        { label: '08/03', volume: 6800000, transactions: 489 },
+        { label: '15/03', volume: 9100000, transactions: 672 },
+        { label: '22/03', volume: 7400000, transactions: 521 },
+        { label: '29/03', volume: 3900000, transactions: 287 }
+      ]
+    },
+    year: {
+      period: 'year',
+      points: [
+        { label: 'Jan', volume: 28000000, transactions: 1920 },
+        { label: 'Fev', volume: 31500000, transactions: 2140 },
+        { label: 'Mar', volume: 41200000, transactions: 2890 },
+        { label: 'Abr', volume: 0, transactions: 0 },
+        { label: 'Mai', volume: 0, transactions: 0 },
+        { label: 'Jun', volume: 0, transactions: 0 }
+      ]
+    }
+  };
+
   onMount(async () => {
     const result = await service.getMetrics();
     if (result.ok) {
       metrics = result.value;
     } else {
-      error = result.failure.message;
+      // DEV: fallback to mock data when backend is unavailable
+      metrics = MOCK_METRICS;
     }
     loading = false;
   });
@@ -49,6 +111,9 @@
     service.getChartData(period).then((result) => {
       if (result.ok) {
         chartData = result.value;
+      } else {
+        // DEV: fallback to mock data when backend is unavailable
+        chartData = MOCK_CHART[period];
       }
       chartLoading = false;
     });
