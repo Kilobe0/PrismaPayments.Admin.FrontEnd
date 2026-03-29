@@ -88,7 +88,7 @@
   --primary: var(--color-brand-magenta);
   --primary-foreground: var(--color-background);
 
-  --secondary: var(--color-surface-elevated);
+  --secondary: var(--color-secondary);
   --secondary-foreground: var(--color-foreground);
 
   --muted: var(--color-surface-elevated);
