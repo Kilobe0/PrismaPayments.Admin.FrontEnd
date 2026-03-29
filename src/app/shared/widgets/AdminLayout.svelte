@@ -37,13 +37,8 @@
   <!-- Sidebar: 240px fixo, background #0A0A0F -->
   <aside style="width: 240px; min-width: 240px; background: var(--color-background-subtle, #0A0A0F); border-right: 1px solid var(--color-border, rgba(255,255,255,0.08)); display: flex; flex-direction: column; flex-shrink: 0;">
     <!-- Logo area -->
-    <div style="padding: 16px 16px 24px; border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08));">
-      <span style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, #FF00FF, #01FAFB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; text-wrap: balance;">
-        PRISMA
-      </span>
-      <span style="display: block; font-size: 0.75rem; font-weight: 400; color: var(--color-foreground-secondary, #9090A8); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px;">
-        Admin Panel
-      </span>
+    <div style="padding: 20px 16px; border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08));">
+      <img src="/Prisma_Pay_White.svg" alt="PRISMA Pay" style="height: 28px; width: auto;" />
     </div>
 
     <!-- Nav items -->

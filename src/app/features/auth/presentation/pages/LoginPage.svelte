@@ -48,9 +48,9 @@
   <div style="
     position: relative;
     width: 100%;
-    max-width: 400px;
+    max-width: 460px;
     margin: 24px;
-    padding: 40px;
+    padding: 48px;
     background: #0F0F18;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 24px;
@@ -66,57 +66,8 @@
     "></div>
 
     <!-- Logo area -->
-    <div style="text-align: center; margin-bottom: 36px;">
-      <!-- Prism mark -->
-      <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="prism-grad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#FF00FF"/>
-              <stop offset="100%" stop-color="#01FAFB"/>
-            </linearGradient>
-          </defs>
-          <!-- Outer diamond -->
-          <path d="M24 4L44 24L24 44L4 24L24 4Z" stroke="url(#prism-grad)" stroke-width="1.5" fill="none"/>
-          <!-- Inner diamond -->
-          <path d="M24 12L36 24L24 36L12 24L24 12Z" stroke="url(#prism-grad)" stroke-width="1" fill="rgba(255,0,255,0.06)"/>
-          <!-- Center dot -->
-          <circle cx="24" cy="24" r="3" fill="url(#prism-grad)"/>
-          <!-- Facet lines -->
-          <line x1="24" y1="4" x2="24" y2="12" stroke="url(#prism-grad)" stroke-width="1" opacity="0.5"/>
-          <line x1="44" y1="24" x2="36" y2="24" stroke="url(#prism-grad)" stroke-width="1" opacity="0.5"/>
-          <line x1="24" y1="44" x2="24" y2="36" stroke="url(#prism-grad)" stroke-width="1" opacity="0.5"/>
-          <line x1="4" y1="24" x2="12" y2="24" stroke="url(#prism-grad)" stroke-width="1" opacity="0.5"/>
-        </svg>
-      </div>
-
-      <!-- Wordmark -->
-      <div style="display: flex; align-items: baseline; justify-content: center; gap: 8px; margin-bottom: 6px;">
-        <span style="
-          font-family: var(--font-display);
-          font-size: 1.75rem;
-          font-weight: 800;
-          letter-spacing: -0.02em;
-          background: linear-gradient(135deg, #FF00FF 0%, #01FAFB 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        ">PRISMA</span>
-        <span style="
-          font-family: var(--font-body);
-          font-size: 0.7rem;
-          font-weight: 600;
-          color: #3A3A50;
-          text-transform: uppercase;
-          letter-spacing: 0.15em;
-          padding: 3px 8px;
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 9999px;
-        ">Admin</span>
-      </div>
-      <p style="color: #3A3A50; font-size: 0.8125rem; margin: 0; letter-spacing: 0.01em;">
-        Painel de controle interno
-      </p>
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
+      <img src="/Logo_White@2x.png" alt="PRISMA Pay" style="height: 120px; width: auto; display: block;" />
     </div>
 
     <!-- Form -->
