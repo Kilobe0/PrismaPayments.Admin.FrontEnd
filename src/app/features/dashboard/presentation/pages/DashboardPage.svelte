@@ -127,10 +127,10 @@
   ];
 
   const metricCards = $derived(metrics ? [
-    { label: 'VOLUME TOTAL', value: formatCurrency(metrics.totalVolume), color: '#01FAFB' },
-    { label: 'TRANSAÇÕES HOJE', value: metrics.todayTransactions.toLocaleString('pt-BR'), color: '#01FAFB' },
-    { label: 'TAXAS COLETADAS', value: formatCurrency(metrics.totalFeesCollected), color: '#00E676' },
-    { label: 'MERCHANTS', value: metrics.totalMerchants.toLocaleString('pt-BR'), color: '#9090A8' }
+    { label: 'Volume total', value: formatCurrency(metrics.totalVolume) },
+    { label: 'Transações hoje', value: metrics.todayTransactions.toLocaleString('pt-BR') },
+    { label: 'Taxas coletadas', value: formatCurrency(metrics.totalFeesCollected) },
+    { label: 'Merchants', value: metrics.totalMerchants.toLocaleString('pt-BR') }
   ] : []);
 
   const barChartData = $derived(chartData ? {
@@ -139,19 +139,10 @@
       {
         label: 'Volume (R$)',
         data: chartData.points.map(p => p.volume / 100),
-        backgroundColor: 'rgba(1, 250, 251, 0.8)',
-        borderColor: 'rgba(1, 250, 251, 1)',
+        backgroundColor: 'rgba(1, 250, 251, 0.15)',
+        borderColor: 'rgba(1, 250, 251, 0.7)',
         borderWidth: 1,
         borderRadius: 4
-      },
-      {
-        label: 'Transações',
-        data: chartData.points.map(p => p.transactions),
-        backgroundColor: 'rgba(255, 0, 255, 0.8)',
-        borderColor: 'rgba(255, 0, 255, 1)',
-        borderWidth: 1,
-        borderRadius: 4,
-        yAxisID: 'yTransactions'
       }
     ]
   } : { labels: [], datasets: [] });
@@ -160,12 +151,7 @@
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        labels: {
-          color: '#9090A8',
-          font: { size: 12 }
-        }
-      },
+      legend: { display: false },
       tooltip: {
         backgroundColor: '#0F0F18',
         borderColor: 'rgba(255,255,255,0.08)',
@@ -176,18 +162,12 @@
     },
     scales: {
       x: {
-        grid: { color: 'rgba(255,255,255,0.05)' },
+        grid: { color: 'rgba(255,255,255,0.04)' },
         ticks: { color: '#9090A8', font: { size: 11 } }
       },
       y: {
-        grid: { color: 'rgba(255,255,255,0.05)' },
-        ticks: { color: '#9090A8', font: { size: 11 } },
-        position: 'left' as const
-      },
-      yTransactions: {
-        grid: { drawOnChartArea: false },
-        ticks: { color: '#9090A8', font: { size: 11 } },
-        position: 'right' as const
+        grid: { color: 'rgba(255,255,255,0.04)' },
+        ticks: { color: '#9090A8', font: { size: 11 } }
       }
     }
   };
@@ -281,7 +261,7 @@
           <p style="font-size: 0.75rem; font-weight: 400; color: #9090A8; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px;">
             {card.label}
           </p>
-          <p style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: {card.color}; margin: 0;">
+          <p style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: #F6F6FF; margin: 0;">
             {card.value}
           </p>
         </div>
