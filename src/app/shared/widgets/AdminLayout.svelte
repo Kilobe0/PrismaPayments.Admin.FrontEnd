@@ -159,7 +159,7 @@
   }
 
   .logo-img {
-    height: 28px;
+    height: 36px;
     width: auto;
     display: block;
   }
