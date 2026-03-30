@@ -195,7 +195,7 @@
   .nav-group-label {
     display: block;
     padding: 6px 12px 3px;
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     font-family: var(--font-mono, monospace);
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -211,7 +211,7 @@
     gap: 9px;
     padding: 8px 12px 8px 10px;
     border-radius: 10px;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--color-foreground-secondary, #9090A8);
     background: transparent;
@@ -330,7 +330,7 @@
     align-items: center;
     padding: 1px 7px;
     border-radius: 999px;
-    font-size: 0.575rem;
+    font-size: 0.6875rem;
     font-family: var(--font-mono, monospace);
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -364,7 +364,7 @@
     gap: 9px;
     padding: 8px 12px;
     border-radius: 10px;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--color-foreground-secondary, #9090A8);
     background: transparent;
