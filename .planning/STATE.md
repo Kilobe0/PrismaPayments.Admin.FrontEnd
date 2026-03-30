@@ -19,6 +19,11 @@ progress:
 
 ## Accumulated Context
 
+### Pending Todos
+
+- 1 todo pendente: "Refazer sidebar AdminLayout com personalidade visual PRISMA" (área: ui)
+  → `.planning/todos/pending/2026-03-30-refazer-sidebar-adminlayout-com-personalidade-visual-prisma.md`
+
 ### Roadmap Evolution
 
 - Phase 01.1 inserida após Phase 1: shadcn init e identidade visual Prisma (URGENT)
