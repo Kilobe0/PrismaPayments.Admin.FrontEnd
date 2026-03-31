@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-last_updated: "2026-03-28T23:24:28.581Z"
+last_updated: "2026-03-31T22:25:30.066Z"
 progress:
   total_phases: 9
   completed_phases: 2
   total_plans: 8
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
 **Status:** Ready to plan
-**Last session:** 2026-03-28T23:24:28.578Z
+**Last session:** 2026-03-31T22:25:30.063Z
 
 ## Accumulated Context
 
@@ -99,6 +99,7 @@ Phase 1 completa — todos os 5 planos executados.
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P01 | 8 min | 2 tasks | 104 files |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P02 | 5 min | 2 tasks | 3 files |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P03 | 10 | 2 tasks | 5 files |
+| Phase 02 P02 | 4 min | 2 tasks | 8 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -131,6 +132,12 @@ Phase 1 completa — todos os 5 planos executados.
 - Input shadcn passes style via ...restProps spread, so inline style override works correctly
 - AdminLayout glow uses padding 4-value shorthand to control padding-left independently per isActive state
 
+## Decisions Made in Plan 02-02
+
+- StatusBadge only accepts `status` prop (no `type`) — remove type prop from all usages in MerchantDetailPage
+- Route /merchants/[id] uses `$page.params.id` from `$app/stores` — no page.server.ts needed for dynamic params
+- onValueChange on shadcn Tabs proxied to bits-ui Root via ...restProps spread — works for lazy load trigger
+
 ## Next Action
 
-Phase 01.1 complete (3/3 plans). Ready for verification or Phase 2: Merchants.
+Phase 02 Plan 02 complete. Plans 02-03 and 02-04 will integrate KYC and Credentials stubs.
