@@ -11,6 +11,7 @@
   import { formatCurrency, formatDate, formatDocument } from '$appmod/shared/utils/formatters';
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
   import MerchantStatusActions from '../components/MerchantStatusActions.svelte';
+  import MerchantKYCTab from '../components/MerchantKYCTab.svelte';
 
   let { merchantId, role }: { merchantId: string; role: string | null } = $props();
 
@@ -275,10 +276,13 @@
               {/each}
             </div>
           {:else if ctrl.state.kycLoaded}
-            <!-- MerchantKYCTab integrado no Plan 02-03 -->
-            <div class="lazy-placeholder">
-              <p class="placeholder-text">KYC: {ctrl.state.kycDocs.length} documento(s) carregado(s). Componente MerchantKYCTab será integrado no Plan 02-03.</p>
-            </div>
+            <MerchantKYCTab
+              merchantId={m.id}
+              docs={ctrl.state.kycDocs}
+              merchantVerificationStatus={m.verificationStatus}
+              {role}
+              onVerificationUpdate={ctrl.updateVerification}
+            />
           {:else}
             <div class="lazy-placeholder">
               <p class="placeholder-text">Clique na aba para carregar documentos KYC.</p>

@@ -37,6 +37,7 @@
     "chart.js": "^4.5.1",
     "jwt-decode": "^4.0.0",
     "lucide-svelte": "^0.475.0",
+    "pdfjs-dist": "^5.6.205",
     "svelte-sonner": "^1.1.0",
     "svelte5-chartjs": "^1.0.0",
     "tailwind-merge": "^3.5.0",
