@@ -52,7 +52,14 @@ Plans:
   3. Admin (SUPPORT+) aprova, suspende, bloqueia ou reativa um merchant via dialog de confirmação com campo de motivo obrigatório — status reflete imediatamente na lista
   4. Admin (SUPPORT+) revisa documentos KYC (imagens e PDFs em preview inline via pdfjs-dist), aprova ou rejeita com campo de notas — resultado persiste
   5. Admin (ADMIN+) cria um novo merchant via formulário completo e cria credencial de API exibindo o secretKey apenas uma vez
-**Plans**: TBD
+**Plans**: 1/4 plans complete
+
+Plans:
+- [x] 02-01-PLAN.md — Fundação (domain/data/service/controller/page) + lista com tabs + sidebar badge
+- [ ] 02-02-PLAN.md — Merchant Detail page (tabs Info/KYC/Saldo/Config/Transações/Credenciais)
+- [ ] 02-03-PLAN.md — KYC Review (aprovação/rejeição com preview de documentos)
+- [ ] 02-04-PLAN.md — Criar Merchant (formulário + criar credencial)
+
 **UI hint**: yes
 
 ### Phase 3: Transactions

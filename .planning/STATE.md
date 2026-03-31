@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-last_updated: "2026-03-28T23:24:28.581Z"
+last_updated: "2026-03-31T22:36:18.656Z"
 progress:
   total_phases: 9
   completed_phases: 2
   total_plans: 8
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
 **Status:** Ready to plan
-**Last session:** 2026-03-28T23:24:28.578Z
+**Last session:** 2026-03-31T22:36:18.653Z
 
 ## Accumulated Context
 
@@ -33,7 +33,7 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 ## Current Position
 
 Phase: 02
-Plan: Not started
+Plan: 01 complete — ready for 02
 
 ## Current Phase
 
@@ -99,6 +99,7 @@ Phase 1 completa — todos os 5 planos executados.
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P01 | 8 min | 2 tasks | 104 files |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P02 | 5 min | 2 tasks | 3 files |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P03 | 10 | 2 tasks | 5 files |
+| Phase 02 P01 | 4 min | 4 tasks | 12 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -131,6 +132,14 @@ Phase 1 completa — todos os 5 planos executados.
 - Input shadcn passes style via ...restProps spread, so inline style override works correctly
 - AdminLayout glow uses padding 4-value shorthand to control padding-left independently per isActive state
 
+## Decisions Made in Plan 02-01
+
+- DataTable usa ColumnDef<T> do @tanstack/table-core e cellSnippet — adaptado do plano original (plano assumia API simplificada com {key, header})
+- SearchInput usa prop onSearch (não onchange) e SelectFilter usa prop onChange (não onchange) — corrigido conforme implementação real
+- Route passa data.adminRole (do layout server) ao invés de data.role inexistente no PageData
+- AdminLayout badge usa fetch direto sem apiClient para evitar dependência circular no layout
+- loadCounts() faz 4 requests paralelos com Promise.all para carregar contagens por tab
+
 ## Next Action
 
-Phase 01.1 complete (3/3 plans). Ready for verification or Phase 2: Merchants.
+Phase 02 Plan 01 complete (4/4 tasks). Ready to execute 02-02 (Merchant Detail page).
