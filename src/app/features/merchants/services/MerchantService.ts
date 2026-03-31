@@ -1,5 +1,5 @@
 import type { Either, Failure } from '$core/error/Failure';
-import { left } from '$core/error/Failure';
+import { right } from '$core/error/Failure';
 import type { MerchantRepository } from '../data/repositories/MerchantRepository';
 import type {
   PaginatedMerchants,
@@ -69,7 +69,9 @@ export class MerchantService {
       limit: 1,
       page: 1
     });
-    if (!result.ok) return left(result.failure);
-    return { ok: true, value: result.value.total };
+    if (result.ok) {
+      return right(result.value.total);
+    }
+    return result;
   }
 }
