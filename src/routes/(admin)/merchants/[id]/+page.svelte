@@ -1,7 +1,8 @@
 <script lang="ts">
-  import MerchantDetailPage from '$appmod/features/merchants/management/presentation/pages/MerchantDetailPage.svelte';
+  import { page } from '$app/stores';
+  import MerchantDetailPage from '$appmod/features/merchants/presentation/pages/MerchantDetailPage.svelte';
 
-  let { params } = $props<{ params: { id: string } }>();
+  let { data } = $props<{ data: { adminRole?: string | null } }>();
 </script>
 
-<MerchantDetailPage merchantId={params.id} />
+<MerchantDetailPage merchantId={$page.params.id} role={data.adminRole ?? null} />
