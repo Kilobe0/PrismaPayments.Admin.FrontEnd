@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-31T22:16:47.761Z"
+last_updated: "2026-03-31T22:53:14.145Z"
 progress:
   total_phases: 9
   completed_phases: 2
   total_plans: 12
-  completed_plans: 8
+  completed_plans: 11
 ---
 
 # Project State
 
 **Last updated:** 2026-03-25
-**Status:** Executing Phase 02
-**Last session:** 2026-03-28T23:24:28.578Z
+**Status:** Ready to execute
+**Last session:** 2026-03-31T22:53:14.141Z
 
 ## Accumulated Context
 
@@ -38,7 +38,7 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 ## Current Position
 
 Phase: 02 (merchants) — EXECUTING
-Plan: 1 of 4
+Plan: 2 of 4
 
 ## Current Phase
 
@@ -104,6 +104,7 @@ Phase 1 completa — todos os 5 planos executados.
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P01 | 8 min | 2 tasks | 104 files |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P02 | 5 min | 2 tasks | 3 files |
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P03 | 10 | 2 tasks | 5 files |
+| Phase 02 P03 | 8 min | 2 tasks | 4 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -136,6 +137,12 @@ Phase 1 completa — todos os 5 planos executados.
 - Input shadcn passes style via ...restProps spread, so inline style override works correctly
 - AdminLayout glow uses padding 4-value shorthand to control padding-left independently per isActive state
 
+## Decisions Made in Plan 02-03
+
+- ConfirmDialog uses requiresReason (with 's') and onconfirm/oncancel (lowercase) — adapted from reading real component API before implementing
+- StatusBadge has no type prop — only status prop, confirmed from real implementation
+- pdfjs-dist CDN worker URL used to avoid vite config changes for worker bundling
+
 ## Next Action
 
-Phase 01.1 complete (3/3 plans). Ready for verification or Phase 2: Merchants.
+Phase 02 Plan 03 complete. Ready for Plan 02-04: Merchant Credentials + Transactions tabs.

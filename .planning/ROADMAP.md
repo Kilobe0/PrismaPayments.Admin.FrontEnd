@@ -56,9 +56,9 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 02-01-PLAN.md — Foundation: Sheet install, apiPaths, domain, repository, service, controller, lista com tabs/filtros, sidebar badge
-- [ ] 02-02-PLAN.md — Detail Page: controller híbrido, 6 abas (Info/Saldo/Config eager + KYC/Creds/Txns lazy)
-- [ ] 02-03-PLAN.md — KYC Review + Status Actions: ConfirmDialog por status, pdfjs-dist preview inline
+- [x] 02-01-PLAN.md — Foundation: Sheet install, apiPaths, domain, repository, service, controller, lista com tabs/filtros, sidebar badge
+- [x] 02-02-PLAN.md — Detail Page: controller híbrido, 6 abas (Info/Saldo/Config eager + KYC/Creds/Txns lazy)
+- [x] 02-03-PLAN.md — KYC Review + Status Actions: ConfirmDialog por status, pdfjs-dist preview inline
 - [ ] 02-04-PLAN.md — Credenciais + Criar Merchant: CredentialsTab, SecretKeyModal one-time, TransactionsTab, CreateMerchantSheet
 
 ### Phase 3: Transactions
@@ -136,7 +136,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Auth + Core Infrastructure | 5/5 | Complete   | 2026-03-25 |
 | 01.1. shadcn init + identidade visual | 3/3 | Complete    | 2026-03-25 |
-| 2. Merchants | 0/4 | Not started | - |
+| 2. Merchants | 3/4 | In Progress|  |
 | 3. Transactions | 0/0 | Not started | - |
 | 4. Disputes | 0/0 | Not started | - |
 | 5. Fees | 0/0 | Not started | - |
