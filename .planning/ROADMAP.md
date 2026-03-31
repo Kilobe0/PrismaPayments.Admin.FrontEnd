@@ -52,15 +52,14 @@ Plans:
   3. Admin (SUPPORT+) aprova, suspende, bloqueia ou reativa um merchant via dialog de confirmação com campo de motivo obrigatório — status reflete imediatamente na lista
   4. Admin (SUPPORT+) revisa documentos KYC (imagens e PDFs em preview inline via pdfjs-dist), aprova ou rejeita com campo de notas — resultado persiste
   5. Admin (ADMIN+) cria um novo merchant via formulário completo e cria credencial de API exibindo o secretKey apenas uma vez
-**Plans**: 1/4 plans complete
+**Plans**: 4 planos criados
+**UI hint**: yes
 
 Plans:
-- [x] 02-01-PLAN.md — Fundação (domain/data/service/controller/page) + lista com tabs + sidebar badge
-- [ ] 02-02-PLAN.md — Merchant Detail page (tabs Info/KYC/Saldo/Config/Transações/Credenciais)
-- [ ] 02-03-PLAN.md — KYC Review (aprovação/rejeição com preview de documentos)
-- [ ] 02-04-PLAN.md — Criar Merchant (formulário + criar credencial)
-
-**UI hint**: yes
+- [ ] 02-01-PLAN.md — Foundation: Sheet install, apiPaths, domain, repository, service, controller, lista com tabs/filtros, sidebar badge
+- [ ] 02-02-PLAN.md — Detail Page: controller híbrido, 6 abas (Info/Saldo/Config eager + KYC/Creds/Txns lazy)
+- [ ] 02-03-PLAN.md — KYC Review + Status Actions: ConfirmDialog por status, pdfjs-dist preview inline
+- [ ] 02-04-PLAN.md — Credenciais + Criar Merchant: CredentialsTab, SecretKeyModal one-time, TransactionsTab, CreateMerchantSheet
 
 ### Phase 3: Transactions
 **Goal**: Time interno visualiza todos os pagamentos e saques da plataforma, filtrados por merchant, status, método e período, com detalhe completo por transação
@@ -137,7 +136,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Auth + Core Infrastructure | 5/5 | Complete   | 2026-03-25 |
 | 01.1. shadcn init + identidade visual | 3/3 | Complete    | 2026-03-25 |
-| 2. Merchants | 0/0 | Not started | - |
+| 2. Merchants | 0/4 | Not started | - |
 | 3. Transactions | 0/0 | Not started | - |
 | 4. Disputes | 0/0 | Not started | - |
 | 5. Fees | 0/0 | Not started | - |

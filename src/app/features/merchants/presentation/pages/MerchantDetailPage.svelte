@@ -10,6 +10,7 @@
   import { createMerchantDetailController } from '../controllers/merchantDetailController.svelte';
   import { formatCurrency, formatDate, formatDocument } from '$appmod/shared/utils/formatters';
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
+  import MerchantStatusActions from '../components/MerchantStatusActions.svelte';
 
   let { merchantId, role }: { merchantId: string; role: string | null } = $props();
 
@@ -100,9 +101,16 @@
         </div>
       </div>
 
-      <!-- MerchantStatusActions — integrado no Plan 02-03 -->
-      <div class="status-actions-placeholder">
-        <!-- status actions serão adicionadas no Plan 02-03 -->
+      <div class="header-actions">
+        <MerchantStatusActions
+          merchant={m}
+          {role}
+          updating={ctrl.state.statusUpdating}
+          onStatusUpdate={ctrl.updateStatus}
+        />
+        {#if ctrl.state.statusError}
+          <p class="status-error">{ctrl.state.statusError}</p>
+        {/if}
       </div>
     </div>
 
@@ -405,6 +413,14 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+  }
+
+  /* Status error */
+  .status-error {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--color-danger, #FF3B5C);
+    margin-top: 6px;
   }
 
   /* Loading skeletons */

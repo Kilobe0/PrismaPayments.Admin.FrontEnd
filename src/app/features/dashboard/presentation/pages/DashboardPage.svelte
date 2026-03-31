@@ -10,15 +10,27 @@
     Legend
   } from 'chart.js';
   import { Bar } from 'svelte5-chartjs';
-  import { AlertTriangle, Clock } from 'lucide-svelte';
+  import {
+    AlertTriangle,
+    Clock,
+    TrendingUp,
+    Wallet,
+    Hourglass,
+    Receipt,
+    CreditCard,
+    Store,
+    ShieldAlert,
+    ScanFace
+  } from 'lucide-svelte';
   import { goto } from '$app/navigation';
+  import { Tabs, TabsList, TabsTrigger } from '$lib/components/ui/tabs';
+  import { Skeleton } from '$lib/components/ui/skeleton';
   import { DashboardService } from '../../services/DashboardService';
   import { DashboardRepository } from '../../data/repositories/DashboardRepository';
   import { formatCurrency } from '$appmod/shared/utils/formatters';
   import type { AdminMetrics } from '../../domain/entities/AdminMetrics';
   import type { DashboardChartData, DashboardPeriod } from '../../domain/entities/DashboardSeries';
 
-  // Register Chart.js components (must be done once, client-side only)
   ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
   let metrics = $state<AdminMetrics | null>(null);
@@ -94,44 +106,26 @@
 
   onMount(async () => {
     const result = await service.getMetrics();
-    if (result.ok) {
-      metrics = result.value;
-    } else {
-      // DEV: fallback to mock data when backend is unavailable
-      metrics = MOCK_METRICS;
-    }
+    metrics = result.ok ? result.value : MOCK_METRICS;
     loading = false;
   });
 
-  // Re-fetch chart data whenever activePeriod changes
   $effect(() => {
     const period = activePeriod;
     chartLoading = true;
     chartData = null;
     service.getChartData(period).then((result) => {
-      if (result.ok) {
-        chartData = result.value;
-      } else {
-        // DEV: fallback to mock data when backend is unavailable
-        chartData = MOCK_CHART[period];
-      }
+      chartData = result.ok ? result.value : MOCK_CHART[period];
       chartLoading = false;
     });
   });
 
   const PERIODS: { key: DashboardPeriod; label: string }[] = [
-    { key: 'today', label: 'Hoje' },
-    { key: 'week', label: 'Esta semana' },
-    { key: 'month', label: 'Este mês' },
-    { key: 'year', label: 'Este ano' }
+    { key: 'today',  label: 'Hoje' },
+    { key: 'week',   label: 'Semana' },
+    { key: 'month',  label: 'Mês' },
+    { key: 'year',   label: 'Ano' }
   ];
-
-  const metricCards = $derived(metrics ? [
-    { label: 'Volume total', value: formatCurrency(metrics.totalVolume) },
-    { label: 'Transações hoje', value: metrics.todayTransactions.toLocaleString('pt-BR') },
-    { label: 'Taxas coletadas', value: formatCurrency(metrics.totalFeesCollected) },
-    { label: 'Merchants', value: metrics.totalMerchants.toLocaleString('pt-BR') }
-  ] : []);
 
   const barChartData = $derived(chartData ? {
     labels: chartData.points.map(p => p.label),
@@ -139,10 +133,10 @@
       {
         label: 'Volume (R$)',
         data: chartData.points.map(p => p.volume / 100),
-        backgroundColor: 'rgba(1, 250, 251, 0.15)',
-        borderColor: 'rgba(1, 250, 251, 0.7)',
+        backgroundColor: 'rgba(192, 38, 211, 0.12)',
+        borderColor: 'rgba(192, 38, 211, 0.55)',
         borderWidth: 1,
-        borderRadius: 4
+        borderRadius: 3
       }
     ]
   } : { labels: [], datasets: [] });
@@ -153,169 +147,409 @@
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#0F0F18',
-        borderColor: 'rgba(255,255,255,0.08)',
+        backgroundColor: '#0a0910',
+        borderColor: 'rgba(255,255,255,0.10)',
         borderWidth: 1,
-        titleColor: '#F6F6FF',
-        bodyColor: '#9090A8'
+        titleColor: 'rgba(218,212,196,0.90)',
+        bodyColor: 'rgba(218,212,196,0.45)',
+        padding: 12,
+        titleFont: { family: 'JetBrains Mono', size: 11 },
+        bodyFont:  { family: 'JetBrains Mono', size: 11 }
       }
     },
     scales: {
       x: {
         grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#9090A8', font: { size: 11 } }
+        ticks: { color: 'rgba(218,212,196,0.35)', font: { family: 'JetBrains Mono', size: 10 } },
+        border: { color: 'rgba(255,255,255,0.06)' }
       },
       y: {
         grid: { color: 'rgba(255,255,255,0.04)' },
-        ticks: { color: '#9090A8', font: { size: 11 } }
+        ticks: { color: 'rgba(218,212,196,0.35)', font: { family: 'JetBrains Mono', size: 10 } },
+        border: { color: 'rgba(255,255,255,0.06)' }
       }
     }
   };
 </script>
 
-<div style="padding: 32px; max-width: 1080px; margin: 0 auto;">
-  <!-- Page header -->
-  <div style="margin-bottom: 32px;">
-    <h1 style="font-family: var(--font-display); font-size: 1.875rem; font-weight: 700; color: #F6F6FF; margin: 0 0 4px;">
-      Dashboard
-    </h1>
-    <p style="color: #9090A8; font-size: 0.875rem; margin: 0;">
-      Visão geral da plataforma
-    </p>
+<div class="page">
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Visão geral da plataforma</p>
   </div>
 
-  {#if loading}
-    <div style="display: flex; align-items: center; justify-content: center; padding: 64px 0;">
-      <p style="color: #9090A8;">Carregando métricas...</p>
-    </div>
-  {:else if error}
-    <div style="background: rgba(255,59,92,0.10); border: 1px solid rgba(255,59,92,0.20); border-radius: 12px; padding: 16px;">
-      <p style="color: #FF3B5C; margin: 0;">{error}</p>
-    </div>
-  {:else}
-    <!-- DASH-03: Alert cards — rendered above metric cards, only when count > 0 -->
-    {#if metrics && (metrics.openDisputes > 0 || metrics.pendingKycCount > 0)}
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
-        {#if metrics.openDisputes > 0}
-          <button
-            type="button"
-            onclick={() => goto('/disputes')}
-            style="
-              display: flex;
-              align-items: center;
-              gap: 12px;
-              width: 100%;
-              padding: 14px 16px;
-              background: rgba(255,59,92,0.10);
-              border: 1px solid rgba(255,59,92,0.20);
-              border-radius: 12px;
-              cursor: pointer;
-              text-align: left;
-              transition: background 0.15s;
-            "
-            onmouseenter={(e) => (e.currentTarget.style.background = 'rgba(255,59,92,0.16)')}
-            onmouseleave={(e) => (e.currentTarget.style.background = 'rgba(255,59,92,0.10)')}
-          >
-            <AlertTriangle size={16} strokeWidth={1.5} style="color: #FF3B5C; flex-shrink: 0;" />
-            <span style="font-size: 0.875rem; color: #F6F6FF;">
-              <strong style="color: #FF3B5C;">{metrics.openDisputes}</strong>
-              {metrics.openDisputes === 1 ? 'disputa aberta' : 'disputas abertas'}
-            </span>
-          </button>
-        {/if}
-
-        {#if metrics.pendingKycCount > 0}
-          <button
-            type="button"
-            onclick={() => goto('/merchants?verification=PENDING_REVIEW')}
-            style="
-              display: flex;
-              align-items: center;
-              gap: 12px;
-              width: 100%;
-              padding: 14px 16px;
-              background: rgba(255,179,0,0.10);
-              border: 1px solid rgba(255,179,0,0.20);
-              border-radius: 12px;
-              cursor: pointer;
-              text-align: left;
-              transition: background 0.15s;
-            "
-            onmouseenter={(e) => (e.currentTarget.style.background = 'rgba(255,179,0,0.16)')}
-            onmouseleave={(e) => (e.currentTarget.style.background = 'rgba(255,179,0,0.10)')}
-          >
-            <Clock size={16} strokeWidth={1.5} style="color: #FFB300; flex-shrink: 0;" />
-            <span style="font-size: 0.875rem; color: #F6F6FF;">
-              <strong style="color: #FFB300;">{metrics.pendingKycCount}</strong>
-              {metrics.pendingKycCount === 1 ? 'verificação pendente' : 'verificações pendentes'}
-            </span>
-          </button>
-        {/if}
-      </div>
-    {/if}
-
-    <!-- DASH-01: Metric cards grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; margin-bottom: 32px;">
-      {#each metricCards as card}
-        <div style="background: #0F0F18; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.50);">
-          <p style="font-size: 0.75rem; font-weight: 400; color: #9090A8; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px;">
-            {card.label}
-          </p>
-          <p style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: #F6F6FF; margin: 0;">
-            {card.value}
-          </p>
-        </div>
-      {/each}
-    </div>
-
-    <!-- DASH-02: Period tabs + bar chart -->
-    <div style="background: #0F0F18; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.50);">
-      <!-- Period tab strip -->
-      <div style="display: inline-flex; gap: 4px; margin-bottom: 24px;">
-        {#each PERIODS as period}
-          <button
-            type="button"
-            onclick={() => (activePeriod = period.key)}
-            style="
-              padding: 6px 16px;
-              border-radius: 9999px;
-              font-size: 0.875rem;
-              cursor: pointer;
-              transition: background 0.15s;
-              {activePeriod === period.key
-                ? 'background: #141420; color: #F6F6FF; border: 1px solid rgba(255,255,255,0.14); font-weight: 400;'
-                : 'background: transparent; color: #9090A8; border: 1px solid transparent;'}
-            "
-            onmouseenter={(e) => {
-              if (activePeriod !== period.key) {
-                e.currentTarget.style.background = '#0F0F18';
-              }
-            }}
-            onmouseleave={(e) => {
-              if (activePeriod !== period.key) {
-                e.currentTarget.style.background = 'transparent';
-              }
-            }}
-          >
-            {period.label}
-          </button>
-        {/each}
-      </div>
-
-      <!-- Chart area -->
-      {#if chartLoading}
-        <div style="height: 280px; display: flex; align-items: center; justify-content: center;">
-          <p style="color: #9090A8; font-size: 0.875rem;">Carregando...</p>
-        </div>
-      {:else if chartData && chartData.points.length > 0}
-        <div style="height: 280px; position: relative;">
-          <Bar data={barChartData} options={barChartOptions} />
-        </div>
-      {:else}
-        <div style="height: 280px; display: flex; align-items: center; justify-content: center;">
-          <p style="color: #9090A8; font-size: 0.875rem;">Sem dados para o período selecionado.</p>
-        </div>
+  <!-- Alert banners -->
+  {#if !loading && metrics && (metrics.openDisputes > 0 || metrics.pendingKycCount > 0)}
+    <div class="alerts">
+      {#if metrics.openDisputes > 0}
+        <button
+          type="button"
+          class="alert-card alert-danger"
+          onclick={() => goto('/disputes')}
+        >
+          <AlertTriangle size={14} strokeWidth={1.5} />
+          <span class="alert-label">DISPUTAS ABERTAS</span>
+          <span class="alert-count">{metrics.openDisputes}</span>
+        </button>
+      {/if}
+      {#if metrics.pendingKycCount > 0}
+        <button
+          type="button"
+          class="alert-card alert-warn"
+          onclick={() => goto('/merchants?verification=PENDING_REVIEW')}
+        >
+          <Clock size={14} strokeWidth={1.5} />
+          <span class="alert-label">KYC PENDENTE</span>
+          <span class="alert-count">{metrics.pendingKycCount}</span>
+        </button>
       {/if}
     </div>
   {/if}
+
+  <!-- Section: Financeiro -->
+  <div class="section-label">FINANCEIRO</div>
+  <div class="metrics-grid">
+    {#if loading}
+      {#each Array(4) as _}
+        <div class="metric-card">
+          <Skeleton class="skeleton-icon" />
+          <Skeleton class="skeleton-label" />
+          <Skeleton class="skeleton-value" />
+        </div>
+      {/each}
+    {:else if metrics}
+      <div class="metric-card">
+        <TrendingUp size={14} class="metric-icon" />
+        <span class="metric-label">VOLUME TOTAL</span>
+        <span class="metric-value">{formatCurrency(metrics.totalVolume)}</span>
+      </div>
+      <div class="metric-card">
+        <Wallet size={14} class="metric-icon" />
+        <span class="metric-label">SALDO DISPONÍVEL</span>
+        <span class="metric-value">{formatCurrency(metrics.availableBalance)}</span>
+      </div>
+      <div class="metric-card">
+        <Hourglass size={14} class="metric-icon" />
+        <span class="metric-label">SALDO PENDENTE</span>
+        <span class="metric-value metric-muted">{formatCurrency(metrics.pendingBalance)}</span>
+      </div>
+      <div class="metric-card">
+        <Receipt size={14} class="metric-icon" />
+        <span class="metric-label">TAXAS COLETADAS</span>
+        <span class="metric-value">{formatCurrency(metrics.totalFeesCollected)}</span>
+      </div>
+    {/if}
+  </div>
+
+  <!-- Section: Operacional -->
+  <div class="section-label">OPERACIONAL</div>
+  <div class="metrics-grid">
+    {#if loading}
+      {#each Array(4) as _}
+        <div class="metric-card">
+          <Skeleton class="skeleton-icon" />
+          <Skeleton class="skeleton-label" />
+          <Skeleton class="skeleton-value" />
+        </div>
+      {/each}
+    {:else if metrics}
+      <div class="metric-card">
+        <CreditCard size={14} class="metric-icon" />
+        <span class="metric-label">TRANSAÇÕES HOJE</span>
+        <span class="metric-value">{metrics.todayTransactions.toLocaleString('pt-BR')}</span>
+        <span class="metric-sub">{metrics.totalTransactions.toLocaleString('pt-BR')} no total</span>
+      </div>
+      <div class="metric-card">
+        <Store size={14} class="metric-icon" />
+        <span class="metric-label">MERCHANTS</span>
+        <span class="metric-value">{metrics.totalMerchants.toLocaleString('pt-BR')}</span>
+      </div>
+      <div class="metric-card {metrics.openDisputes > 0 ? 'metric-card-danger' : ''}">
+        <ShieldAlert size={14} class="metric-icon {metrics.openDisputes > 0 ? 'metric-icon-danger' : ''}" />
+        <span class="metric-label">DISPUTAS ABERTAS</span>
+        <span class="metric-value {metrics.openDisputes > 0 ? 'metric-value-danger' : ''}">{metrics.openDisputes}</span>
+      </div>
+      <div class="metric-card {metrics.pendingKycCount > 0 ? 'metric-card-warn' : ''}">
+        <ScanFace size={14} class="metric-icon {metrics.pendingKycCount > 0 ? 'metric-icon-warn' : ''}" />
+        <span class="metric-label">KYC PENDENTE</span>
+        <span class="metric-value {metrics.pendingKycCount > 0 ? 'metric-value-warn' : ''}">{metrics.pendingKycCount}</span>
+      </div>
+    {/if}
+  </div>
+
+  <!-- Chart section -->
+  <div class="chart-panel">
+    <div class="prism-line" aria-hidden="true"></div>
+    <div class="chart-header">
+      <span class="chart-title">VOLUME DE TRANSAÇÕES</span>
+      <Tabs bind:value={activePeriod} class="chart-tabs">
+        <TabsList>
+          {#each PERIODS as p}
+            <TabsTrigger value={p.key}>{p.label}</TabsTrigger>
+          {/each}
+        </TabsList>
+      </Tabs>
+    </div>
+
+    {#if chartLoading}
+      <div class="chart-loading">
+        <Skeleton class="chart-skeleton" />
+      </div>
+    {:else if chartData && chartData.points.length > 0}
+      <div class="chart-area">
+        <Bar data={barChartData} options={barChartOptions} />
+      </div>
+    {:else}
+      <div class="chart-empty">
+        <span>SEM DADOS PARA O PERÍODO</span>
+      </div>
+    {/if}
+  </div>
 </div>
+
+<style>
+  /* ── Prism gradient ──────────────────────────────────── */
+  :root {
+    --prism: linear-gradient(
+      90deg,
+      #c026d3 0%, #7c3aed 22%, #4f46e5 44%,
+      #0891b2 70%, #06b6d4 86%, #c026d3 100%
+    );
+  }
+  @keyframes prism-shift {
+    from { background-position: 0%   0%; }
+    to   { background-position: 200% 0%; }
+  }
+
+  /* ── Page layout ─────────────────────────────────────── */
+  .page {
+    padding: 32px 36px;
+    max-width: 1120px;
+    margin: 0 auto;
+    animation: enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes enter {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header { margin-bottom: 28px; }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(218, 212, 196, 0.90);
+    margin: 0 0 4px;
+    text-transform: uppercase;
+  }
+
+  .page-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(218, 212, 196, 0.35);
+    margin: 0;
+  }
+
+  /* ── Alert banners ───────────────────────────────────── */
+  .alerts {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .alert-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid;
+    transition: background 0.18s;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .alert-danger {
+    background: rgba(180, 60, 60, 0.08);
+    border-color: rgba(180, 60, 60, 0.30);
+    color: rgba(200, 100, 100, 0.85);
+  }
+  .alert-danger:hover { background: rgba(180, 60, 60, 0.14); }
+
+  .alert-warn {
+    background: rgba(180, 130, 40, 0.08);
+    border-color: rgba(180, 130, 40, 0.30);
+    color: rgba(218, 168, 80, 0.85);
+  }
+  .alert-warn:hover { background: rgba(180, 130, 40, 0.14); }
+
+  .alert-label { flex: 1; }
+
+  .alert-count {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  /* ── Section label ───────────────────────────────────── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(218, 212, 196, 0.22);
+    margin-bottom: 10px;
+    margin-top: 4px;
+  }
+
+  /* ── Metrics grid ────────────────────────────────────── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .metric-card {
+    position: relative;
+    background: #0a0910;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 6px;
+    padding: 18px 20px 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.5);
+    transition: border-color 0.18s;
+  }
+  .metric-card:hover {
+    border-color: rgba(255, 255, 255, 0.13);
+  }
+
+  .metric-card-danger {
+    border-color: rgba(180, 60, 60, 0.25);
+  }
+  .metric-card-warn {
+    border-color: rgba(180, 130, 40, 0.25);
+  }
+
+  :global(.metric-icon) {
+    color: rgba(218, 212, 196, 0.22);
+    margin-bottom: 4px;
+  }
+  :global(.metric-icon-danger) { color: rgba(200, 100, 100, 0.55) !important; }
+  :global(.metric-icon-warn)   { color: rgba(218, 168, 80, 0.55)  !important; }
+
+  .metric-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    color: rgba(218, 212, 196, 0.35);
+  }
+
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: rgba(218, 212, 196, 0.90);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+  .metric-muted  { color: rgba(218, 212, 196, 0.50); }
+  .metric-value-danger { color: rgba(200, 100, 100, 0.85); }
+  .metric-value-warn   { color: rgba(218, 168, 80, 0.85); }
+
+  .metric-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.10em;
+    color: rgba(218, 212, 196, 0.22);
+    margin-top: 2px;
+  }
+
+  /* ── Skeleton overrides ──────────────────────────────── */
+  :global(.skeleton-icon)  { width: 14px; height: 14px; border-radius: 3px; }
+  :global(.skeleton-label) { width: 80px;  height: 9px;  border-radius: 2px; }
+  :global(.skeleton-value) { width: 120px; height: 20px; border-radius: 3px; margin-top: 4px; }
+
+  /* ── Chart panel ─────────────────────────────────────── */
+  .chart-panel {
+    position: relative;
+    background: #0a0910;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 6px;
+    padding: 20px 24px 24px;
+    overflow: hidden;
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.5), 0 16px 48px rgba(0,0,0,0.6);
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .chart-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(218, 212, 196, 0.35);
+  }
+
+  :global(.chart-tabs) {
+    gap: 0 !important;
+  }
+
+  .chart-area {
+    height: 260px;
+    position: relative;
+  }
+
+  .chart-loading {
+    height: 260px;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    padding-top: 12px;
+  }
+
+  :global(.chart-skeleton) {
+    flex: 1;
+    height: 100%;
+    border-radius: 3px;
+  }
+
+  .chart-empty {
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(218, 212, 196, 0.22);
+  }
+
+  /* ── Responsive ─────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .page { padding: 20px 16px; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  }
+</style>
