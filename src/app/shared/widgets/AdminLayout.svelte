@@ -1,15 +1,35 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
+  import { onMount } from 'svelte';
   import type { Snippet } from 'svelte';
   import {
     LayoutDashboard, Users, CreditCard, ArrowDownToLine,
     AlertTriangle, DollarSign, BookOpen, Plug, Activity,
-    UserCog, LogOut
+    UserCog, LogOut, ScanFace
   } from 'lucide-svelte';
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
 
   let { content, role }: { content: Snippet; role: string | null } = $props();
+
+  let pendingKYCCount = $state(0);
+
+  onMount(async () => {
+    try {
+      // GET /api/v1/admin/merchants?verification=PENDING_REVIEW&limit=1
+      // Usa fetch direto (sem apiClient) para não criar dependência circular no layout
+      const res = await fetch('/api/v1/admin/merchants?verification=PENDING_REVIEW&limit=1', {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        const json = await res.json();
+        // Estrutura esperada: { data: [...], total: N, ... }
+        pendingKYCCount = json.total ?? json.data?.length ?? 0;
+      }
+    } catch {
+      // silencioso — badge simplesmente não aparece
+    }
+  });
 
   const baseNavItems = [
     { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
@@ -73,6 +93,34 @@
           {item.label}
         </a>
       {/each}
+
+      <!-- Verificações Pendentes — link dedicado com badge -->
+      {@const isPendingActive = $page.url.pathname === '/merchants' && $page.url.searchParams.get('verification') === 'PENDING_REVIEW'}
+      <a
+        href="/merchants?verification=PENDING_REVIEW"
+        style="
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 9px 12px 9px {isPendingActive ? '10px' : '12px'};
+          border-radius: 10px;
+          font-size: 0.875rem;
+          font-weight: {isPendingActive ? '700' : '400'};
+          color: {isPendingActive ? 'var(--color-foreground, #F6F6FF)' : 'var(--color-foreground-secondary, #9090A8)'};
+          background: {isPendingActive ? 'var(--color-surface-elevated, #141420)' : 'transparent'};
+          border-left: {isPendingActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
+          box-shadow: {isPendingActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
+          text-decoration: none;
+          transition: background 0.15s, color 0.15s;
+          min-height: 44px;
+        "
+      >
+        <ScanFace size={16} strokeWidth={1.5} />
+        Verificações Pendentes
+        {#if pendingKYCCount > 0}
+          <span class="nav-badge nav-badge--cyan">{pendingKYCCount}</span>
+        {/if}
+      </a>
     </nav>
 
     <!-- Logout -->
@@ -102,3 +150,26 @@
     {@render content()}
   </main>
 </div>
+
+<style>
+  .nav-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-family: var(--font-mono, monospace);
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .nav-badge--cyan {
+    background: rgba(1, 250, 251, 0.12);
+    color: var(--color-brand-cyan, #01FAFB);
+    border: 1px solid rgba(1, 250, 251, 0.25);
+  }
+</style>
