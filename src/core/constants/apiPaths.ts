@@ -14,6 +14,8 @@ export const API_PATHS = {
   ADMIN_MERCHANT_VERIFICATION: (id: string) => `/api/v1/admin/merchants/${id}/verification`,
   ADMIN_MERCHANT_SETTINGS: (id: string) => `/api/v1/admin/merchants/${id}/settings`,
   ADMIN_MERCHANT_CREDENTIALS: (id: string) => `/api/v1/admin/merchants/${id}/credentials`,
+  ADMIN_MERCHANT_DOCUMENTS: (id: string) => `/api/v1/admin/merchants/${id}/documents`,
+  ADMIN_TENANTS: '/api/v1/admin/tenants',
 
   // Transactions
   ADMIN_PAYMENTS: '/api/v1/admin/payments',
