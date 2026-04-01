@@ -12,6 +12,7 @@
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
   import MerchantStatusActions from '../components/MerchantStatusActions.svelte';
   import MerchantKYCTab from '../components/MerchantKYCTab.svelte';
+  import MerchantCredentialsTab from '../components/MerchantCredentialsTab.svelte';
 
   let { merchantId, role }: { merchantId: string; role: string | null } = $props();
 
@@ -301,10 +302,12 @@
               {/each}
             </div>
           {:else if ctrl.state.credsLoaded}
-            <!-- MerchantCredentialsTab integrado no Plan 02-04 -->
-            <div class="lazy-placeholder">
-              <p class="placeholder-text">Credenciais: {ctrl.state.credentials.length} chave(s). Componente MerchantCredentialsTab será integrado no Plan 02-04.</p>
-            </div>
+            <MerchantCredentialsTab
+              merchantId={m.id}
+              credentials={ctrl.state.credentials}
+              {role}
+              onCreateCredential={ctrl.createCredential}
+            />
           {:else}
             <div class="lazy-placeholder">
               <p class="placeholder-text">Clique na aba para carregar credenciais.</p>

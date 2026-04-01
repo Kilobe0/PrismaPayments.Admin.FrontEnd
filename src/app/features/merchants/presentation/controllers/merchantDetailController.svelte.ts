@@ -4,6 +4,8 @@ import type {
   Merchant,
   MerchantDocument,
   MerchantCredential,
+  MerchantCredentialCreated,
+  CreateCredentialPayload,
   MerchantSettingsUpdate,
   MerchantStatusUpdate,
   MerchantVerificationUpdate
@@ -163,6 +165,15 @@ export function createMerchantDetailController(merchantId: string) {
     return result;
   }
 
+  /** Cria credencial e atualiza lista local */
+  async function createCredential(payload: CreateCredentialPayload): Promise<import('$core/error/Failure').Either<import('$core/error/Failure').Failure, MerchantCredentialCreated>> {
+    const result = await service.createCredential(merchantId, payload);
+    if (result.ok) {
+      state.credentials = [...state.credentials, result.value];
+    }
+    return result;
+  }
+
   /** Callback após criar credencial — recarrega lista */
   function refreshCredentials() {
     state.credsLoaded = false;
@@ -182,6 +193,7 @@ export function createMerchantDetailController(merchantId: string) {
     updateSettings,
     updateStatus,
     updateVerification,
+    createCredential,
     refreshCredentials,
     setActiveTab
   };
