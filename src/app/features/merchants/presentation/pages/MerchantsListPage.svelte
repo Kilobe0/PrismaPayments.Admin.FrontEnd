@@ -13,10 +13,13 @@
   import { formatDate, formatDocument } from '$appmod/shared/utils/formatters';
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
   import type { MerchantStatus, MerchantListItem } from '$appmod/features/merchants/domain/entities/Merchant';
+  import CreateMerchantSheet from '../components/CreateMerchantSheet.svelte';
 
   let { role }: { role: string | null } = $props();
 
   const ctrl = createMerchantListController();
+
+  let showCreateSheet = $state(false);
 
   const STATUS_TABS: { key: MerchantStatus | 'ALL'; label: string }[] = [
     { key: 'ALL',       label: 'Todos' },
@@ -77,7 +80,7 @@
       <p class="page-subtitle">Gestão de estabelecimentos</p>
     </div>
     {#if isAdmin}
-      <Button variant="default" class="btn-new">
+      <Button variant="default" class="btn-new" onclick={() => (showCreateSheet = true)}>
         + Novo Merchant
       </Button>
     {/if}
@@ -157,6 +160,11 @@
     {/if}
   {/if}
 </div>
+
+<CreateMerchantSheet
+  bind:open={showCreateSheet}
+  onCreated={() => ctrl.loadMerchants()}
+/>
 
 {#snippet cellRenderer({ row, columnId }: { row: Row<MerchantListItem>; columnId: string })}
   {#if columnId === 'status'}
