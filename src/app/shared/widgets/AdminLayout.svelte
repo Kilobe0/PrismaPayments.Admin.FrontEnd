@@ -13,6 +13,7 @@
   let { content, role }: { content: Snippet; role: string | null } = $props();
 
   let pendingKYCCount = $state(0);
+  const isPendingActive = $derived($page.url.pathname === '/merchants' && $page.url.searchParams.get('verification') === 'PENDING_REVIEW');
 
   onMount(async () => {
     try {
@@ -95,7 +96,6 @@
       {/each}
 
       <!-- Verificações Pendentes — link dedicado com badge -->
-      {@const isPendingActive = $page.url.pathname === '/merchants' && $page.url.searchParams.get('verification') === 'PENDING_REVIEW'}
       <a
         href="/merchants?verification=PENDING_REVIEW"
         style="
