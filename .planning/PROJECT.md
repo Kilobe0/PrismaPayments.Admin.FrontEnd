@@ -25,16 +25,18 @@ Equipe interna deve conseguir operar e supervisionar toda a plataforma de pagame
 - ✓ **Tema Prisma aplicado** em app.css (14 CSS vars shadcn → tokens Prisma, nenhum HSL cinza) — Validated in Phase 01.1
 - ✓ **Widgets migrados para shadcn/bits-ui** (ConfirmDialog, StatusBadge, Pagination, DataTable, filtros) — Validated in Phase 01.1
 - ✓ **Glow Prisma na sidebar** (item ativo com border magenta + box-shadow) — Validated in Phase 01.1
+- ✓ **Merchants — Lista**: tabela paginada com filtros (status, verificação), tabs de contagem, sidebar badge — Validated in Phase 02: merchants
+- ✓ **Merchants — Detalhe**: página com 6 abas (Info, Saldo, KYC, Configurações, Credenciais, Transações) — Validated in Phase 02
+- ✓ **Merchants — KYC Review**: aprovação/rejeição com pdfjs preview e role guard SUPPORT+ — Validated in Phase 02
+- ✓ **Merchants — Status Actions**: transitions condicionais com ConfirmDialog + motivo obrigatório — Validated in Phase 02
+- ✓ **Merchants — Criar**: CreateMerchantSheet com formulário completo + dropdown tenants — Validated in Phase 02
+- ✓ **Merchants — Credenciais API**: lista, criação, SecretKeyModal one-time display, role ADMIN+ — Validated in Phase 02
 
 ### Active
 
 - [ ] **Fix auth crítico**: cookie `access_token` nunca escrito no login — toda navegação redireciona para `/login`
 - [ ] **Auth guards ativos**: `adminGuard.ts` existe mas nunca é chamado em nenhuma rota
 - [ ] **Token refresh automático**: interceptor de refresh para sessões expirantes
-- [ ] **Merchants — Lista**: tabela paginada com filtros (status, verificação), ordenação
-- [ ] **Merchants — Detalhe**: página completa com info, status actions, KYC docs, saldo, configurações, transações recentes, credenciais de API
-- [ ] **Merchants — KYC Review**: aprovação/rejeição de verificação com preview de documentos
-- [ ] **Merchants — Criar**: formulário de criação de merchant (role ADMIN+)
 - [ ] **Transações — Pagamentos**: lista cross-merchant com filtros (merchant, status, método, período)
 - [ ] **Transações — Saques**: lista cross-merchant com filtros (merchant, status)
 - [ ] **Disputas**: lista + resolução de chargebacks (role SUPPORT+)
@@ -115,4 +117,4 @@ Este documento evolui a cada transição de fase e milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-03-25 after Phase 01.1 (shadcn-init-e-identidade-visual-prisma)*
+*Last updated: 2026-04-01 after Phase 02 (merchants) — feature completa com 9/9 requirements verificados*
