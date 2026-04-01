@@ -43,8 +43,8 @@
 - [ ] **MERCH-01**: Lista paginada de merchants com filtros por status (PENDING/ACTIVE/SUSPENDED/BLOCKED) e por verificação (UNVERIFIED/PENDING_REVIEW/VERIFIED/REJECTED)
 - [ ] **MERCH-02**: Tabs de filtro rápido por status na lista (count por tab)
 - [x] **MERCH-03**: Página de detalhe do merchant com abas: Info / KYC / Saldo / Configurações / Transações / Credenciais
-- [ ] **MERCH-04**: Ações de status do merchant (Aprovar / Suspender / Bloquear / Reativar) com dialog de confirmação e campo de motivo obrigatório (role SUPPORT+)
-- [ ] **MERCH-05**: Review de KYC: visualização de documentos enviados (frente, verso, selfie, comprovante, contrato) com preview/download; botões Aprovar/Rejeitar com campo de notas (role SUPPORT+)
+- [x] **MERCH-04**: Ações de status do merchant (Aprovar / Suspender / Bloquear / Reativar) com dialog de confirmação e campo de motivo obrigatório (role SUPPORT+)
+- [x] **MERCH-05**: Review de KYC: visualização de documentos enviados (frente, verso, selfie, comprovante, contrato) com preview/download; botões Aprovar/Rejeitar com campo de notas (role SUPPORT+)
 - [ ] **MERCH-06**: Criar merchant pelo admin com formulário completo (role ADMIN+)
 - [x] **MERCH-07**: Editar configurações do merchant: webhook URL, limites de saque, auto-withdrawal (role ADMIN+)
 - [ ] **MERCH-08**: Criar credencial de API para merchant com seleção de ambiente LIVE/TEST; exibir secretKey apenas uma vez (role ADMIN+)
