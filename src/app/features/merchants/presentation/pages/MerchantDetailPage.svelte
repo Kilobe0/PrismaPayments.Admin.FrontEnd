@@ -12,6 +12,8 @@
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
   import MerchantStatusActions from '../components/MerchantStatusActions.svelte';
   import MerchantKYCTab from '../components/MerchantKYCTab.svelte';
+  import MerchantCredentialsTab from '../components/MerchantCredentialsTab.svelte';
+  import MerchantTransactionsTab from '../components/MerchantTransactionsTab.svelte';
 
   let { merchantId, role }: { merchantId: string; role: string | null } = $props();
 
@@ -301,10 +303,12 @@
               {/each}
             </div>
           {:else if ctrl.state.credsLoaded}
-            <!-- MerchantCredentialsTab integrado no Plan 02-04 -->
-            <div class="lazy-placeholder">
-              <p class="placeholder-text">Credenciais: {ctrl.state.credentials.length} chave(s). Componente MerchantCredentialsTab será integrado no Plan 02-04.</p>
-            </div>
+            <MerchantCredentialsTab
+              merchantId={m.id}
+              credentials={ctrl.state.credentials}
+              {role}
+              onCreateCredential={ctrl.createCredential}
+            />
           {:else}
             <div class="lazy-placeholder">
               <p class="placeholder-text">Clique na aba para carregar credenciais.</p>
@@ -323,16 +327,10 @@
               {/each}
             </div>
           {:else if ctrl.state.txnsLoaded}
-            <!-- MerchantTransactionsTab integrado no Plan 02-04 -->
-            <div class="lazy-placeholder">
-              <p class="placeholder-text">
-                Transações: {ctrl.state.recentTxns.length} recente(s).
-                Componente MerchantTransactionsTab será integrado no Plan 02-04.
-              </p>
-              <a href="/transactions/payments?merchantId={m.id}" class="link-all-txns">
-                Ver todas as transações →
-              </a>
-            </div>
+            <MerchantTransactionsTab
+              merchantId={m.id}
+              transactions={ctrl.state.recentTxns}
+            />
           {:else}
             <div class="lazy-placeholder">
               <p class="placeholder-text">Clique na aba para carregar transações.</p>
