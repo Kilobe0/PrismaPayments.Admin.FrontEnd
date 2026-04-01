@@ -9,6 +9,7 @@
     UserCog, LogOut, ScanFace
   } from 'lucide-svelte';
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
+  import { env } from '$core/config/env';
 
   let { content, role }: { content: Snippet; role: string | null } = $props();
 
@@ -17,9 +18,7 @@
 
   onMount(async () => {
     try {
-      // GET /api/v1/admin/merchants?verification=PENDING_REVIEW&limit=1
-      // Usa fetch direto (sem apiClient) para não criar dependência circular no layout
-      const res = await fetch('/api/v1/admin/merchants?verification=PENDING_REVIEW&limit=1', {
+      const res = await fetch(`${env.apiBaseUrl}/api/v1/admin/merchants?verification=PENDING_REVIEW&limit=1`, {
         headers: { 'Content-Type': 'application/json' }
       });
       if (res.ok) {
