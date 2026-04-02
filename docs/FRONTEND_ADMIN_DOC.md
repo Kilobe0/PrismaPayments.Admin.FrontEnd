@@ -1,3 +1,15 @@
+MUDANÇAS:
+  1. TenantBrandingResponse — nota explicando que logoUrl e faviconUrl são URLs resolvidas pelo backend (públicas ou
+  presigned com 7 dias de validade)
+  2. Criar Tenant (POST /admin/tenants) — request mudou de JSON para multipart/form-data. Campos logoUrl/faviconUrl
+  substituídos por branding.logo e branding.favicon como File. Adicionado exemplo de envio com FormData
+  3. Atualizar Tenant (PUT /admin/tenants/{id}) — request mudou para multipart/form-data com
+  branding.logo/branding.favicon como File. Nota sobre deleção automática do arquivo anterior ao enviar um novo
+  4. Review de Verificação KYC (PUT /admin/merchants/{id}/verification) — adicionada a response tipada e nota sobre
+  invalidação automática de cache após atualizar o status
+  5. Documentos KYC do Merchant (GET /admin/merchants/{id}/documents) — campo fileUrl documentado como URL resolvida
+  (pública ou presigned)
+
 # Frontend Admin (Painel Administrativo) — Documentação de Implementação
 
 > Documentação completa para implementar o painel administrativo do Prisma Payments.
@@ -453,11 +465,14 @@ GET /api/v1/admin/tenants
 ```
 
 **TenantBrandingResponse:**
+
+> **Nota:** Os campos `logoUrl` e `faviconUrl` são retornados como URLs resolvidas pelo backend. Se `R2_PUBLIC_URL` estiver configurada, será uma URL pública direta. Caso contrário, será uma presigned URL com validade de 7 dias. O frontend deve usar as URLs retornadas diretamente (não construir URLs manualmente).
+
 ```typescript
 {
   displayName: string | null             // Nome de exibição (pode diferir do name)
-  logoUrl: string | null
-  faviconUrl: string | null
+  logoUrl: string | null                 // URL resolvida (pública ou presigned)
+  faviconUrl: string | null              // URL resolvida (pública ou presigned)
   primaryColor: string | null            // Hex (ex: "#6366f1")
   secondaryColor: string | null
   accentColor: string | null
@@ -494,32 +509,45 @@ POST /api/v1/admin/tenants
 
 **Role mínimo:** SUPER_ADMIN
 
-**Request:**
+**Content-Type:** `multipart/form-data`
+
+Os arquivos de logo e favicon são enviados diretamente. O backend faz o upload para o storage (R2) e armazena a URL internamente.
+
+**Request (FormData):**
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `name` | string | Nome do tenant |
+| `slug` | string | Slug URL-safe (único) |
+| `branding.displayName` | string? | Nome de exibição |
+| `branding.logo` | File? | Arquivo de logo (imagem) |
+| `branding.favicon` | File? | Arquivo de favicon (imagem) |
+| `branding.primaryColor` | string? | Hex (ex: "#6366f1") |
+| `branding.secondaryColor` | string? | Hex |
+| `branding.accentColor` | string? | Hex |
+| `branding.backgroundColor` | string? | Hex |
+| `branding.surfaceColor` | string? | Hex |
+| `branding.textColor` | string? | Hex |
+| `branding.mutedTextColor` | string? | Hex |
+| `branding.fontFamily` | string? | Ex: "Inter, sans-serif" |
+| `branding.supportEmail` | string? | Email de suporte |
+| `branding.supportPhone` | string? | Telefone de suporte |
+| `branding.websiteUrl` | string? | URL do site |
+| `branding.checkoutHeadline` | string? | Título na página de checkout |
+| `branding.checkoutDescription` | string? | Descrição na página de checkout |
+| `branding.customCss` | string? | CSS customizado |
+| `branding.customDomain` | string? | Domínio customizado |
+
+**Exemplo de envio:**
 ```typescript
-{
-  name: string                           // Nome do tenant
-  slug: string                           // Slug URL-safe (único)
-  branding: {                            // Opcional
-    displayName: string | null
-    logoUrl: string | null
-    faviconUrl: string | null
-    primaryColor: string | null
-    secondaryColor: string | null
-    accentColor: string | null
-    backgroundColor: string | null
-    surfaceColor: string | null
-    textColor: string | null
-    mutedTextColor: string | null
-    fontFamily: string | null
-    supportEmail: string | null
-    supportPhone: string | null
-    websiteUrl: string | null
-    checkoutHeadline: string | null
-    checkoutDescription: string | null
-    customCss: string | null
-    customDomain: string | null
-  } | null
-}
+const formData = new FormData();
+formData.append("name", "Minha Empresa");
+formData.append("slug", "minha-empresa");
+formData.append("branding.logo", logoFile);           // File
+formData.append("branding.favicon", faviconFile);     // File
+formData.append("branding.primaryColor", "#6366f1");
+// ... demais campos de branding
+
+await apiClient.post("/api/v1/admin/tenants", formData);
 ```
 
 **Response (201):**
@@ -549,15 +577,19 @@ PUT /api/v1/admin/tenants/{id}
 
 **Role mínimo:** SUPER_ADMIN
 
-**Request (todos opcionais):**
-```typescript
-{
-  name: string | null
-  slug: string | null
-  status: "ACTIVE" | "SUSPENDED" | "BLOCKED" | null
-  branding: TenantBrandingRequest | null    // Mesma estrutura do request de criação
-}
-```
+**Content-Type:** `multipart/form-data`
+
+**Request (FormData — todos opcionais):**
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `name` | string? | Novo nome |
+| `slug` | string? | Novo slug |
+| `status` | string? | `"ACTIVE"` \| `"SUSPENDED"` \| `"BLOCKED"` |
+| `branding.logo` | File? | Novo arquivo de logo (substitui o anterior) |
+| `branding.favicon` | File? | Novo arquivo de favicon (substitui o anterior) |
+| `branding.*` | string? | Demais campos de branding (mesma estrutura da criação) |
+
+> **Nota:** Ao enviar novo logo ou favicon, o backend deleta automaticamente o arquivo anterior do storage antes de fazer o upload do novo.
 
 **Response:** `TenantResponse` atualizado.
 
@@ -750,6 +782,18 @@ PUT /api/v1/admin/merchants/{id}/verification
 }
 ```
 
+**Response (200):**
+```typescript
+{
+  data: {
+    id: string
+    verificationStatus: "VERIFIED" | "REJECTED"
+  }
+}
+```
+
+**Comportamento:** Após atualizar o status de verificação, o backend invalida automaticamente o cache do merchant para que o novo status seja refletido imediatamente em todas as consultas subsequentes.
+
 **UI:** na página de detalhe do merchant, exibir todos os documentos enviados (com preview/download), e botões "Aprovar" / "Rejeitar" com campo de notas.
 
 #### 5.3.6 Atualizar Settings do Merchant (Admin)
@@ -852,7 +896,7 @@ GET /api/v1/admin/merchants/{id}/documents
       {
         id: string
         documentType: "IDENTITY_FRONT" | "IDENTITY_BACK" | "SELFIE" | "PROOF_OF_ADDRESS" | "ARTICLES_OF_INCORPORATION" | "OTHER"
-        fileUrl: string                    // URL do arquivo para preview/download
+        fileUrl: string                    // URL resolvida (pública ou presigned) — usar diretamente para preview/download
         status: "PENDING" | "APPROVED" | "REJECTED"
         rejectionReason: string | null
         reviewedBy: string | null          // ID do admin que revisou
