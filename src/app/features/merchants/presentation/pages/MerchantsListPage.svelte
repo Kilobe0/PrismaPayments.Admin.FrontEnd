@@ -3,12 +3,12 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import type { ColumnDef, Row } from '@tanstack/table-core';
+  import { Store, ServerCrash, SearchX, Plus, RefreshCw } from 'lucide-svelte';
   import { createMerchantListController } from '../controllers/merchantListController.svelte';
   import DataTable from '$appmod/shared/widgets/DataTable.svelte';
   import StatusBadge from '$appmod/shared/widgets/StatusBadge.svelte';
   import SearchInput from '$appmod/shared/widgets/filters/SearchInput.svelte';
   import SelectFilter from '$appmod/shared/widgets/filters/SelectFilter.svelte';
-  import { Skeleton } from '$lib/components/ui/skeleton';
   import { Button } from '$lib/components/ui/button';
   import { formatDate, formatDocument } from '$appmod/shared/utils/formatters';
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
@@ -37,19 +37,17 @@
     { value: 'REJECTED',       label: 'Rejeitado' }
   ];
 
-  // Colunas para o DataTable (usando ColumnDef do @tanstack/table-core)
   const columns: ColumnDef<MerchantListItem, unknown>[] = [
-    { id: 'legalName',         header: 'Razão Social',   accessorKey: 'legalName' },
-    { id: 'documentNumber',    header: 'Documento',      accessorKey: 'documentNumber' },
-    { id: 'email',             header: 'E-mail',         accessorKey: 'email' },
-    { id: 'status',            header: 'Status',         accessorKey: 'status' },
-    { id: 'verificationStatus', header: 'Verificação',   accessorKey: 'verificationStatus' },
-    { id: 'createdAt',         header: 'Cadastro',       accessorKey: 'createdAt' }
+    { id: 'legalName',          header: 'Razão Social',   accessorKey: 'legalName' },
+    { id: 'documentNumber',     header: 'Documento',      accessorKey: 'documentNumber' },
+    { id: 'email',              header: 'E-mail',         accessorKey: 'email' },
+    { id: 'status',             header: 'Status',         accessorKey: 'status' },
+    { id: 'verificationStatus', header: 'Verificação',    accessorKey: 'verificationStatus' },
+    { id: 'createdAt',          header: 'Cadastro',       accessorKey: 'createdAt' }
   ];
 
   const isAdmin = $derived(hasPermission(role as AdminRole, 'ADMIN'));
 
-  // Dados formatados para exibição na tabela
   const tableData = $derived(
     ctrl.state.merchants.map(m => ({
       ...m,
@@ -58,7 +56,13 @@
     }))
   );
 
-  // Lê query param de verificação da URL
+  // Detecta se há filtros ativos (para diferenciar empty states)
+  const hasActiveFilters = $derived(
+    ctrl.state.search.trim() !== '' ||
+    ctrl.state.verification !== 'ALL' ||
+    ctrl.state.status !== 'ALL'
+  );
+
   onMount(() => {
     const verif = $page.url.searchParams.get('verification');
     if (verif) ctrl.setVerification(verif as any);
@@ -70,6 +74,12 @@
   function handleRowClick(row: Row<MerchantListItem>) {
     goto(`/merchants/${row.original.id}`);
   }
+
+  function clearFilters() {
+    ctrl.setStatus('ALL');
+    ctrl.setVerification('ALL');
+    ctrl.setSearch('');
+  }
 </script>
 
 <div class="page">
@@ -80,9 +90,10 @@
       <p class="page-subtitle">Gestão de estabelecimentos</p>
     </div>
     {#if isAdmin}
-      <Button variant="default" class="btn-new" onclick={() => (showCreateSheet = true)}>
-        + Novo Merchant
-      </Button>
+      <button class="btn-new" onclick={() => (showCreateSheet = true)}>
+        <Plus size={16} strokeWidth={2} />
+        Novo Merchant
+      </button>
     {/if}
   </div>
 
@@ -119,26 +130,75 @@
     />
   </div>
 
-  <!-- Tabela -->
+  <!-- Conteúdo principal -->
   {#if ctrl.state.loading}
-    <div class="skeleton-table">
-      {#each Array(8) as _}
-        <Skeleton class="skeleton-row" />
+    <!-- Skeleton -->
+    <div class="skeleton-wrap">
+      <div class="skeleton-header">
+        {#each columns as _}
+          <div class="skeleton-cell skeleton-cell--head"></div>
+        {/each}
+      </div>
+      {#each Array(7) as _}
+        <div class="skeleton-row">
+          {#each columns as _, i}
+            <div class="skeleton-cell" style="width: {55 + (i * 17 % 35)}%"></div>
+          {/each}
+        </div>
       {/each}
     </div>
+
   {:else if ctrl.state.error}
-    <div class="error-state">
-      <span>{ctrl.state.error}</span>
-      <Button onclick={() => ctrl.loadMerchants()} variant="outline">Tentar novamente</Button>
+    <!-- Error state -->
+    <div class="state-wrapper">
+      <div class="state-icon state-icon--error">
+        <ServerCrash size={32} strokeWidth={1.5} />
+      </div>
+      <p class="state-title">Não foi possível carregar os merchants</p>
+      <p class="state-desc">{ctrl.state.error}</p>
+      <button class="btn-retry" onclick={() => ctrl.loadMerchants()}>
+        <RefreshCw size={14} strokeWidth={2} />
+        Tentar novamente
+      </button>
     </div>
+
+  {:else if ctrl.state.merchants.length === 0}
+    <!-- Empty state -->
+    <div class="state-wrapper">
+      {#if hasActiveFilters}
+        <div class="state-icon state-icon--neutral">
+          <SearchX size={32} strokeWidth={1.5} />
+        </div>
+        <p class="state-title">Nenhum merchant encontrado</p>
+        <p class="state-desc">Não há resultados para os filtros aplicados.</p>
+        <button class="btn-retry" onclick={clearFilters}>
+          Limpar filtros
+        </button>
+      {:else}
+        <div class="state-icon state-icon--brand">
+          <Store size={32} strokeWidth={1.5} />
+        </div>
+        <p class="state-title">Nenhum merchant cadastrado</p>
+        <p class="state-desc">
+          Quando um estabelecimento for criado, ele aparecerá aqui.
+        </p>
+        {#if isAdmin}
+          <button class="btn-new btn-new--centered" onclick={() => (showCreateSheet = true)}>
+            <Plus size={16} strokeWidth={2} />
+            Criar primeiro merchant
+          </button>
+        {/if}
+      {/if}
+    </div>
+
   {:else}
+    <!-- Tabela -->
     <DataTable
       {columns}
       data={tableData}
       pageSize={ctrl.state.limit}
       cellSnippet={cellRenderer}
-    >
-    </DataTable>
+    />
 
     <!-- Paginação server-side -->
     {#if ctrl.state.total > ctrl.state.limit}
@@ -177,116 +237,249 @@
 {/snippet}
 
 <style>
+  /* ── Layout base ───────────────────────────────── */
   .page {
     padding: 32px 36px;
     max-width: 1200px;
     margin: 0 auto;
-    animation: enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: page-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-  @keyframes enter {
-    from { opacity: 0; transform: translateY(12px); }
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
+  /* ── Header ────────────────────────────────────── */
   .page-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
   .page-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
-    color: rgba(218, 212, 196, 0.90);
+    letter-spacing: 0.04em;
+    color: #F6F6FF;
     margin: 0 0 4px;
     text-transform: uppercase;
   }
   .page-subtitle {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.14em;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(218, 212, 196, 0.35);
+    color: #9090A8;
     margin: 0;
   }
+
+  /* ── Botão novo ────────────────────────────────── */
+  .btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 0, 255, 0.35);
+    background: linear-gradient(135deg, #0A0A0F 0%, #18111A 100%);
+    color: #F6F6FF;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s;
+    box-shadow: 0 0 0 0 transparent;
+  }
+  .btn-new:hover {
+    border-color: rgba(255, 0, 255, 0.65);
+    box-shadow: 0 0 16px rgba(255, 0, 255, 0.18);
+    transform: translateY(-1px);
+  }
+  .btn-new--centered {
+    margin-top: 8px;
+  }
+
+  /* ── Tabs de status ────────────────────────────── */
   .status-tabs {
     display: flex;
-    gap: 4px;
+    gap: 2px;
     margin-bottom: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    padding-bottom: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   }
   .status-tab {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 14px;
+    padding: 9px 14px;
     border: none;
     background: transparent;
-    color: rgba(218, 212, 196, 0.45);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.10em;
+    color: #9090A8;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    transition: color 0.18s, border-color 0.18s;
+    transition: color 0.15s, border-color 0.15s;
     margin-bottom: -1px;
   }
   .status-tab:hover {
-    color: rgba(218, 212, 196, 0.75);
+    color: #F6F6FF;
   }
   .status-tab.active {
-    color: var(--color-brand-cyan, #01FAFB);
-    border-bottom-color: var(--color-brand-cyan, #01FAFB);
+    color: #01FAFB;
+    border-bottom-color: #01FAFB;
   }
   .tab-count {
-    background: rgba(1, 250, 251, 0.10);
-    color: var(--color-brand-cyan, #01FAFB);
-    border: 1px solid rgba(1, 250, 251, 0.20);
-    padding: 1px 6px;
+    background: rgba(1, 250, 251, 0.08);
+    color: #01FAFB;
+    border: 1px solid rgba(1, 250, 251, 0.18);
+    padding: 1px 7px;
     border-radius: 999px;
-    font-size: 10px;
-    min-width: 18px;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 20px;
     text-align: center;
   }
+
+  /* ── Filtros ───────────────────────────────────── */
   .filters {
     display: flex;
     gap: 12px;
     margin-bottom: 20px;
     align-items: center;
   }
-  .skeleton-table {
+
+  /* ── Skeleton ──────────────────────────────────── */
+  .skeleton-wrap {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #0F0F18;
+  }
+  .skeleton-header {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    gap: 16px;
+    padding: 12px 16px;
+    background: #0A0A0F;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   }
-  :global(.skeleton-row) {
-    height: 44px;
-    border-radius: 4px;
-    width: 100%;
+  .skeleton-row {
+    display: flex;
+    gap: 16px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
-  .error-state {
+  .skeleton-row:last-child {
+    border-bottom: none;
+  }
+  .skeleton-cell {
+    height: 14px;
+    border-radius: 6px;
+    background: #141420;
+    width: 60%;
+    animation: sk-pulse 1.6s ease-in-out infinite;
+  }
+  .skeleton-cell--head {
+    height: 11px;
+    width: 80px;
+    opacity: 0.6;
+  }
+  @keyframes sk-pulse {
+    0%, 100% { opacity: 0.35; }
+    50%       { opacity: 0.70; }
+  }
+
+  /* ── Empty / Error states ──────────────────────── */
+  .state-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
-    padding: 48px;
-    color: rgba(218, 212, 196, 0.45);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    justify-content: center;
+    padding: 72px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    background: #0F0F18;
+    text-align: center;
+    gap: 0;
   }
+  .state-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .state-icon--brand {
+    background: rgba(1, 250, 251, 0.07);
+    border: 1px solid rgba(1, 250, 251, 0.15);
+    color: #01FAFB;
+  }
+  .state-icon--neutral {
+    background: rgba(144, 144, 168, 0.07);
+    border: 1px solid rgba(144, 144, 168, 0.15);
+    color: #9090A8;
+  }
+  .state-icon--error {
+    background: rgba(255, 59, 92, 0.07);
+    border: 1px solid rgba(255, 59, 92, 0.18);
+    color: #FF3B5C;
+  }
+  .state-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #F6F6FF;
+    margin: 0 0 8px;
+    letter-spacing: 0.01em;
+  }
+  .state-desc {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    color: #9090A8;
+    margin: 0 0 20px;
+    max-width: 340px;
+    line-height: 1.6;
+  }
+  .btn-retry {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #F6F6FF;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+  .btn-retry:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-1px);
+  }
+
+  /* ── Paginação ─────────────────────────────────── */
   .pagination {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    margin-top: 24px;
+    margin-top: 20px;
   }
   .page-info {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: rgba(218, 212, 196, 0.45);
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    color: #9090A8;
+    letter-spacing: 0.02em;
   }
 </style>
