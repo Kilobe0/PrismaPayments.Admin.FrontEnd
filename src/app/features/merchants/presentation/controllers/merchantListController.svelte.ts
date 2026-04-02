@@ -33,7 +33,7 @@ export function createMerchantListController() {
     status: 'ALL',
     verification: 'ALL',
     search: '',
-    loading: false,
+    loading: true,
     error: null,
     pendingKYCCount: 0,
     counts: {}

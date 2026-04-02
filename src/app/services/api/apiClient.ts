@@ -22,11 +22,18 @@ async function refreshAccessToken(): Promise<string | null> {
   if (!refreshToken) return null;
 
   try {
+    const refreshController = new AbortController();
+    const refreshTimeoutId = setTimeout(() => refreshController.abort(), 10000);
     const res = await fetch(`${env.apiBaseUrl}${API_PATHS.AUTH_REFRESH}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken })
+      headers: {
+        'Content-Type': 'application/json',
+        'client-secret': 'ts_live_59417d0080a9a5d4_bd07b236fe5edf809d94abdff969c0cc30c9f66a9dd3d6eb99270ccb88e3ff99'
+      },
+      body: JSON.stringify({ refreshToken }),
+      signal: refreshController.signal
     });
+    clearTimeout(refreshTimeoutId);
     const body = await res.json() as ApiResponse<{ accessToken: string; refreshToken: string; expiresIn?: number }>;
     if ((body.status === 200 || body.status === 201) && body.data?.accessToken) {
       tokenStorage.setTokens(body.data.accessToken, body.data.refreshToken);
@@ -60,8 +67,14 @@ async function request<T>(
   }
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
+    'client-secret': 'ts_live_59417d0080a9a5d4_bd07b236fe5edf809d94abdff969c0cc30c9f66a9dd3d6eb99270ccb88e3ff99'
   };
+
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+  
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   if (!skipAuth) {
     const token = tokenStorage.getAccessToken();
@@ -71,22 +84,34 @@ async function request<T>(
   }
 
   let response: Response;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
   try {
+    // LOG DE DEBUG PARA COMPROVAR:
+    console.log(`[FRONTEND] Disparando requisição para: ${url}`);
+    console.log(`[FRONTEND] Headers enviados:`, headers);
+
     response = await fetch(url, {
       method,
       headers,
-      body: body ? JSON.stringify(body) : undefined
+      body: body ? (isFormData ? body as FormData : JSON.stringify(body)) : undefined,
+      signal: controller.signal
     });
-  } catch {
+  } catch (err) {
+    const isTimeout = err instanceof DOMException && err.name === 'AbortError';
     return {
       responseType: 'INTERNAL_SERVER_ERROR',
-      message: 'Falha de rede. Verifique sua conexão.',
-      title: 'Erro de rede',
+      message: isTimeout
+        ? 'O servidor demorou demais para responder. Tente novamente.'
+        : 'Falha de rede. Verifique sua conexão.',
+      title: isTimeout ? 'Timeout' : 'Erro de rede',
       status: 0,
       data: null,
-      extendedResultCode: 'NETWORK_ERROR',
+      extendedResultCode: isTimeout ? 'TIMEOUT' : 'NETWORK_ERROR',
       date: new Date().toISOString()
     } as ApiResponse<T>;
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   let data: ApiResponse<T>;

@@ -5,7 +5,8 @@ export function formatCurrency(cents: number): string {
   }).format(cents / 100);
 }
 
-export function formatDate(iso: string): string {
+export function formatDate(iso: string | undefined | null): string {
+  if (!iso) return '—';
   return new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -15,7 +16,8 @@ export function formatDate(iso: string): string {
   }).format(new Date(iso));
 }
 
-export function formatDocument(doc: string, type: 'CPF' | 'CNPJ'): string {
+export function formatDocument(doc: string | undefined | null, type: 'CPF' | 'CNPJ'): string {
+  if (!doc) return '—';
   if (type === 'CPF') {
     return doc.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }

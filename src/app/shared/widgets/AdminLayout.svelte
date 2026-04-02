@@ -16,15 +16,14 @@
   let pendingKYCCount = $state(0);
   const isPendingActive = $derived($page.url.pathname === '/merchants' && $page.url.searchParams.get('verification') === 'PENDING_REVIEW');
 
+  import { apiClient } from '$appmod/services/api/apiClient';
+
   onMount(async () => {
     try {
-      const res = await fetch(`${env.apiBaseUrl}/api/v1/admin/merchants?verification=PENDING_REVIEW&limit=1`, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      if (res.ok) {
-        const json = await res.json();
+      const res = await apiClient.get<any>('/api/v1/admin/merchants', { verification: 'PENDING_REVIEW', limit: 1 });
+      if (res.status === 200 && res.data) {
         // Estrutura esperada: { data: [...], total: N, ... }
-        pendingKYCCount = json.total ?? json.data?.length ?? 0;
+        pendingKYCCount = res.data.total ?? res.data.data?.length ?? 0;
       }
     } catch {
       // silencioso — badge simplesmente não aparece
@@ -58,9 +57,7 @@
   <aside style="width: 240px; min-width: 240px; background: var(--color-background-subtle, #0A0A0F); border-right: 1px solid var(--color-border, rgba(255,255,255,0.08)); display: flex; flex-direction: column; flex-shrink: 0;">
     <!-- Logo area -->
     <div style="padding: 16px 16px 24px; border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08));">
-      <span style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, #FF00FF, #01FAFB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: block; text-wrap: balance;">
-        PRISMA
-      </span>
+      <img src="/Prisma_Pay_White.svg" alt="Prisma" style="height: 24px; display: block;" />
       <span style="display: block; font-size: 0.75rem; font-weight: 400; color: var(--color-foreground-secondary, #9090A8); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px;">
         Admin Panel
       </span>
@@ -70,6 +67,7 @@
     <nav style="flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto;">
       {#each navItems as item}
         {@const isActive = $page.url.pathname.startsWith(item.href)}
+        {@const Icon = item.Icon}
         <a
           href={item.href}
           style="
@@ -89,7 +87,7 @@
             min-height: 44px;
           "
         >
-          <svelte:component this={item.Icon} size={16} strokeWidth={1.5} />
+          <Icon size={16} strokeWidth={1.5} />
           {item.label}
         </a>
       {/each}
