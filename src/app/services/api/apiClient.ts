@@ -10,7 +10,8 @@ export interface RequestOptions {
   body?: unknown;
   params?: Record<string, string | number | boolean | undefined | null>;
   skipAuth?: boolean;
-  _isRetry?: boolean;  // flag interna — previne loop de refresh
+  _isRetry?: boolean;    // flag interna — previne loop de refresh
+  _retryCount?: number;  // flag interna — controla retries em 429
 }
 
 // Módulo-level state — singleton compartilhado por todas as requisições
@@ -28,7 +29,7 @@ async function refreshAccessToken(): Promise<string | null> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'client-secret': 'ts_live_59417d0080a9a5d4_bd07b236fe5edf809d94abdff969c0cc30c9f66a9dd3d6eb99270ccb88e3ff99'
+        'client-secret': env.clientSecret
       },
       body: JSON.stringify({ refreshToken }),
       signal: refreshController.signal
@@ -67,7 +68,7 @@ async function request<T>(
   }
 
   const headers: Record<string, string> = {
-    'client-secret': 'ts_live_59417d0080a9a5d4_bd07b236fe5edf809d94abdff969c0cc30c9f66a9dd3d6eb99270ccb88e3ff99'
+    'client-secret': env.clientSecret
   };
 
   const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
@@ -87,10 +88,8 @@ async function request<T>(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 25000);
   try {
-    // LOG DE DEBUG PARA COMPROVAR:
-    console.log(`[FRONTEND] Disparando requisição para: ${url}`);
-    console.log(`[FRONTEND] Headers enviados:`, headers);
 
+    console.log(`[apiClient] ${method} ${url}`);
     response = await fetch(url, {
       method,
       headers,
@@ -125,6 +124,32 @@ async function request<T>(
       status: response.status,
       data: null,
       extendedResultCode: 'PARSE_ERROR',
+      date: new Date().toISOString()
+    } as ApiResponse<T>;
+  }
+
+  // Interceptor de 429: retry automático para requests secundários (pequenos delays)
+  // Não espera mais que 10s para não travar a UX do usuário
+  if (response.status === 429) {
+    const retryCount = options._retryCount ?? 0;
+    if (retryCount < 2) {
+      // Lê o header de reset (em segundos) — mas limita a 10s para não travar a UX
+      const resetHeader = response.headers.get('x-ratelimit-reset') ||
+                          response.headers.get('Retry-After');
+      const rawWait = resetHeader ? parseInt(resetHeader, 10) : 5;
+      const waitSeconds = Math.min(rawWait, 10); // máx 10s de espera silenciosa
+      console.warn(`[apiClient] 429 Rate Limit — aguardando ${waitSeconds}s antes de retentar (tentativa ${retryCount + 1}/2)`);
+      await new Promise<void>(r => setTimeout(r, waitSeconds * 1000));
+      return request<T>(path, { ...options, _retryCount: retryCount + 1 });
+    }
+    // Esgotou retries — retorna o erro 429 normalmente
+    return {
+      responseType: 'INTERNAL_SERVER_ERROR',
+      message: 'Muitas requisições. Tente novamente em breve.',
+      title: 'Limite atingido',
+      status: 429,
+      data: null,
+      extendedResultCode: 'TOO_MANY_REQUESTS',
       date: new Date().toISOString()
     } as ApiResponse<T>;
   }
