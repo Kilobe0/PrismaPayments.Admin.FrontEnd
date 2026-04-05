@@ -83,7 +83,7 @@
             border-left: {isActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
             box-shadow: {isActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
             text-decoration: none;
-            transition: background 0.15s, color 0.15s;
+            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
             min-height: 44px;
           "
         >

@@ -7,6 +7,7 @@
     type SortingState,
     type Row
   } from '@tanstack/table-core';
+  import { browser } from '$app/environment';
   import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
   import * as Table from '$lib/components/ui/table/index.js';
   import Pagination from './Pagination.svelte';
@@ -19,6 +20,7 @@
     loading?: boolean;
     /** Snippet customizado para células: recebe a row e o columnId */
     cellSnippet?: Snippet<[{ row: Row<T>; columnId: string }]>;
+    onRowClick?: (row: Row<T>) => void;
   }
 
   let {
@@ -26,7 +28,8 @@
     data,
     pageSize = 20,
     loading = false,
-    cellSnippet
+    cellSnippet,
+    onRowClick
   }: Props = $props();
 
   let sorting = $state<SortingState>([]);
@@ -48,7 +51,9 @@
       pagination: {
         pageIndex: currentPage - 1,
         pageSize
-      }
+      },
+      columnPinning: { left: [], right: [] },
+      columnVisibility: {},
     },
     onSortingChange: (updater) => {
       sorting = typeof updater === 'function' ? updater(sorting) : updater;
@@ -65,6 +70,7 @@
   const SKELETON_COUNT = 5;
 </script>
 
+{#if browser}
 <div
   style="
     background: var(--color-surface, #0F0F18);
@@ -171,9 +177,10 @@
         {:else}
           {#each visibleRows as row}
             <Table.Row
-              style="border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08)); transition: background 0.15s;"
+              style="border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08)); transition: background 0.15s; {onRowClick ? 'cursor: pointer;' : ''}"
               onmouseenter={(e) => (e.currentTarget.style.background = 'var(--color-surface-elevated, #141420)')}
               onmouseleave={(e) => (e.currentTarget.style.background = 'transparent')}
+              onclick={() => onRowClick?.(row)}
             >
               {#each row.getVisibleCells() as cell}
                 <Table.Cell
@@ -208,6 +215,7 @@
     />
   {/if}
 </div>
+{/if}
 
 <style>
   @keyframes skeleton-pulse {

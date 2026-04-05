@@ -18,6 +18,12 @@
   let passwordFocused = $state(false);
 </script>
 
+<style>
+  .login-btn:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+</style>
+
 <div style="
   min-height: 100svh;
   display: flex;
@@ -184,6 +190,7 @@
       <button
         type="submit"
         disabled={loading}
+        class="login-btn"
         style="
           position: relative;
           overflow: hidden;
@@ -200,7 +207,7 @@
           opacity: {loading ? '0.5' : '1'};
           width: 100%;
           letter-spacing: 0.01em;
-          transition: opacity 0.15s, box-shadow 0.15s;
+          transition: opacity 0.15s, box-shadow 0.15s, transform 0.12s;
           box-shadow: 0 0 20px rgba(255,0,255,0.12);
         "
         onmouseenter={(e) => { if (!loading) e.currentTarget.style.boxShadow = '0 0 28px rgba(255,0,255,0.22)'; }}
