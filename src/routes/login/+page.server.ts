@@ -1,6 +1,6 @@
 import type { Actions } from './$types';
 import { fail } from '@sveltejs/kit';
-import { env } from '$core/config/env';
+import { env as privateEnv } from '$env/dynamic/private';
 
 export const actions: Actions = {
   login: async ({ request, cookies }) => {
@@ -14,9 +14,12 @@ export const actions: Actions = {
 
     let res: Response;
     try {
-      res = await fetch(`${env.apiBaseUrl}/api/v1/auth/admin/login`, {
+      res = await fetch(`${privateEnv.PRIVATE_API_BASE_URL}/api/v1/auth/admin/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'client-secret': privateEnv.PRIVATE_CLIENT_SECRET
+        },
         body: JSON.stringify({ email, password })
       });
     } catch {
@@ -35,7 +38,7 @@ export const actions: Actions = {
     }
 
     if (!body?.data?.accessToken) {
-      return fail(401, { error: 'E-mail ou senha inválidos.' });
+      return fail(401, { error: body.message ?? 'E-mail ou senha inválidos.' });
     }
 
     const secure = process.env.NODE_ENV === 'production';

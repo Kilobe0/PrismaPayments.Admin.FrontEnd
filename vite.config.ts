@@ -3,13 +3,5 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [tailwindcss(), sveltekit()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://prisma-payments-backend-dev.onrender.com',
-        changeOrigin: true
-      }
-    }
-  }
+  plugins: [tailwindcss(), sveltekit()]
 });

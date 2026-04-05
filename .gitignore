@@ -2,4 +2,7 @@ node_modules/
 .svelte-kit/
 build/
 .env
-.env.local
+.env.*
+!.env.example
+err.html
+vite_log.txt
