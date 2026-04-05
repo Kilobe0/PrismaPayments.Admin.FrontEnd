@@ -29,8 +29,11 @@ export class MerchantRepository implements IMerchantRepository {
   async listMerchants(params: ListMerchantsParams): Promise<Either<Failure, PaginatedMerchants>> {
     try {
       const query = new URLSearchParams();
-      if (params.page)   query.set('page',         String(params.page));
-      if (params.limit)  query.set('limit',        String(params.limit));
+      const page  = params.page  ?? 1;
+      const limit = params.limit ?? 20;
+      const skip  = (page - 1) * limit;
+      query.set('skip',  String(skip));
+      query.set('limit', String(limit));
       if (params.status && params.status !== 'ALL')       query.set('status',       params.status);
       if (params.verification && params.verification !== 'ALL') query.set('verification', params.verification);
       if (params.search) query.set('search',       params.search);

@@ -22,6 +22,10 @@ interface MerchantListState {
   counts: Record<string, number>;
 }
 
+function delay(ms: number) {
+  return new Promise<void>(resolve => setTimeout(resolve, ms));
+}
+
 export function createMerchantListController() {
   const service = new MerchantService(new MerchantRepository());
 
@@ -53,7 +57,7 @@ export function createMerchantListController() {
 
     const result = await service.listMerchants(params);
     if (result.ok) {
-      state.merchants = result.value.data;
+      state.merchants = result.value.items;
       state.total = result.value.total;
     } else {
       state.error = result.failure.message;
@@ -66,21 +70,31 @@ export function createMerchantListController() {
     if (result.ok) state.pendingKYCCount = result.value;
   }
 
-  // Carrega contagens individuais por status para exibir nas tabs
-  // Faz 4 requests paralelos com limit=1, usando apenas o campo `total` da resposta
-  async function loadCounts() {
-    const statuses: MerchantStatus[] = ['PENDING', 'ACTIVE', 'SUSPENDED', 'BLOCKED'];
-    const results = await Promise.all(
-      statuses.map(s => service.listMerchants({ page: 1, limit: 1, status: s }))
-    );
-    results.forEach((res, i) => {
-      if (res.ok) state.counts[statuses[i]] = res.value.total;
-    });
+  // Carrega a contagem de um status específico de forma lazy (só quando o usuário
+  // clica na tab pela primeira vez). Usa o campo `total` da resposta paginada.
+  async function loadCountForStatus(s: MerchantStatus) {
+    if (state.counts[s] !== undefined) return; // já carregado, usa cache
+    const res = await service.listMerchants({ page: 1, limit: 1, status: s });
+    if (res.ok) state.counts[s] = res.value.total;
+  }
+
+  /**
+   * Carrega apenas a lista principal. Os counts das tabs são carregados
+   * lazy (ao clicar), não na inicialização da página — evita o burst de
+   * 6+ requests simultâneos que causava HTTP 429.
+   */
+  async function loadAll() {
+    await loadMerchants();
+    // Carrega o KYC count 1s após a lista principal para não competir pelo rate limit
+    await delay(1000);
+    await loadPendingKYCCount();
   }
 
   function setStatus(s: MerchantStatus | 'ALL') {
     state.status = s;
     state.page = 1;
+    // Carrega a contagem do status selecionado de forma lazy (sem esperar — fire & forget)
+    if (s !== 'ALL') loadCountForStatus(s);
     loadMerchants();
   }
 
@@ -101,14 +115,25 @@ export function createMerchantListController() {
     loadMerchants();
   }
 
+  // Reseta todos os filtros de uma vez e dispara um único loadMerchants
+  function resetFilters() {
+    state.status = 'ALL';
+    state.verification = 'ALL';
+    state.search = '';
+    state.page = 1;
+    loadMerchants();
+  }
+
   return {
     get state() { return state; },
+    loadAll,
     loadMerchants,
     loadPendingKYCCount,
-    loadCounts,
+    loadCountForStatus,
     setStatus,
     setVerification,
     setSearch,
-    setPage
+    setPage,
+    resetFilters
   };
 }

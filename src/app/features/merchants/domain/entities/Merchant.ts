@@ -101,9 +101,9 @@ export interface Tenant {
 
 // ── Paginação ─────────────────────────────────────────────────
 export interface PaginatedMerchants {
-  data: MerchantListItem[];
+  items: MerchantListItem[];
   total: number;
-  page: number;
+  skip: number;
   limit: number;
 }
 

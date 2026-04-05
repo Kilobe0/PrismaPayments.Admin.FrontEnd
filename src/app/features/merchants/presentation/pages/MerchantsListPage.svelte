@@ -65,10 +65,11 @@
 
   onMount(() => {
     const verif = $page.url.searchParams.get('verification');
-    if (verif) ctrl.setVerification(verif as any);
-    ctrl.loadMerchants();
-    ctrl.loadPendingKYCCount();
-    ctrl.loadCounts();
+    if (verif) {
+      // Seta sem disparar loadMerchants ainda — loadAll vai cuidar disso
+      ctrl.state.verification = verif as any;
+    }
+    ctrl.loadAll();
   });
 
   function handleRowClick(row: Row<MerchantListItem>) {
@@ -76,9 +77,7 @@
   }
 
   function clearFilters() {
-    ctrl.setStatus('ALL');
-    ctrl.setVerification('ALL');
-    ctrl.setSearch('');
+    ctrl.resetFilters();
   }
 </script>
 
@@ -198,6 +197,7 @@
       data={tableData}
       pageSize={ctrl.state.limit}
       cellSnippet={cellRenderer}
+      onRowClick={handleRowClick}
     />
 
     <!-- Paginação server-side -->
@@ -232,7 +232,7 @@
   {:else if columnId === 'verificationStatus'}
     <StatusBadge status={row.original.verificationStatus} />
   {:else}
-    {String((row.original as Record<string, unknown>)[columnId] ?? '—')}
+    {String((row.original as unknown as Record<string, unknown>)[columnId] ?? '—')}
   {/if}
 {/snippet}
 
