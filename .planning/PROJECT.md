@@ -117,4 +117,4 @@ Este documento evolui a cada transição de fase e milestone.
 4. Atualizar Context com estado atual
 
 ---
-*Last updated: 2026-04-01 after Phase 02 (merchants) — feature completa com 9/9 requirements verificados*
+*Last updated: 2026-04-07 after Phase 02 (merchants) completion — feature completa com 9/9 requirements verificados, fase marcada como completa no ROADMAP*
