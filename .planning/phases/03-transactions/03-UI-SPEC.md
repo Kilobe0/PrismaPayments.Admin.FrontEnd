@@ -60,14 +60,16 @@ Exceptions:
 
 ## Typography
 
-All values from StyleGuide.md. This phase uses 4 sizes and 3 weights:
+All values from StyleGuide.md. This phase uses 4 sizes and 2 weights:
 
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
-| Caption | 12px | 500 (Medium) | 1.50 | Outfit | Table cell secondary text (truncated IDs, dates), badge labels, breadcrumb separator |
-| Body | 14px | 400 (Regular) | 1.55 | Outfit | Table cell primary text, filter labels, detail card field values, sidebar sub-items |
-| Label | 16px | 500 (Medium) | 1.60 | Outfit | Filter section labels, detail card field names, empty state body text |
+| Caption | 12px | 400 (Regular) | 1.50 | Outfit | Table cell secondary text (truncated IDs, dates), badge labels, breadcrumb separator |
+| Body | 14px | 400 (Regular) | 1.55 | Outfit | Table cell primary text, filter labels, detail card field values, detail card field names, sidebar sub-items |
+| Label | 16px | 400 (Regular) | 1.60 | Outfit | Filter section labels, empty state body text |
 | Heading | 20px | 600 (Semibold) | 1.40 | Space Grotesk | Page titles ("Pagamentos", "Saques"), detail card section headings, breadcrumb current page |
+
+Weight rationale: Two weights provide sufficient hierarchy -- size differentiation (12/14/16/20) handles role distinction, while the single weight jump from 400 to 600 marks headings as the clear emphasis level. Former Medium (500) usages merged into Regular (400) with no loss of visual hierarchy since those elements already differ by size.
 
 ---
 
@@ -233,6 +235,13 @@ All values from StyleGuide.md CSS variables already in `app.css`.
 
 ## Layout Specifications
 
+### Focal Points
+
+| Screen Type | Focal Point | Rationale |
+|-------------|-------------|-----------|
+| List pages (Payments, Withdrawals) | DataTable occupying the full content width below the filter bar | The table is the primary data surface; page title and filters serve as navigation context above it. User's eye enters at the page title then drops to the first data row. |
+| Detail pages (Payment, Withdrawal) | "Informacoes Gerais" card — the first and largest card in the stacked layout | Contains status badge, monetary values, and key identifiers. All other cards (Method, Payer, Metadata, Recipient) are supplementary detail expanding from this anchor. |
+
 ### List Page Layout
 
 ```
@@ -288,8 +297,8 @@ All values from StyleGuide.md CSS variables already in `app.css`.
 ```
 
 - Cards: `--color-surface` background, 24px padding, 16px border-radius, `--shadow-md` shadow, `--border-default` border
-- Card heading: 16px Outfit semibold 600, `--color-foreground`
-- Card field labels: 14px Outfit medium 500, `--color-foreground-secondary`
+- Card heading: 16px Outfit regular 400, `--color-foreground`
+- Card field labels: 14px Outfit regular 400, `--color-foreground-secondary`
 - Card field values: 14px Outfit regular 400, `--color-foreground`
 - Gap between cards: 32px
 - Page padding: 48px top, 24px sides
