@@ -38,8 +38,8 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 ## Current Position
 
 Phase: 3
-Plan: 1 (complete)
-Current Plan: 03-01 complete
+Plan: 2 (complete)
+Current Plan: 03-02 complete
 
 ## Current Phase
 
@@ -108,6 +108,7 @@ Phase 1 completa — todos os 5 planos executados.
 | Phase 02 P03 | 8 min | 2 tasks | 4 files |
 | Phase 02 P04 | 8 min | 2 tasks | 7 files |
 | 03 | 01 | 6 min | 2/2 | 25 |
+| 03 | 02 | 8 min | 2/2 | 4 |
 
 ## Decisions Made in Plan 01-03
 
@@ -153,6 +154,12 @@ Phase 1 completa — todos os 5 planos executados.
 - DateRangePicker date filter applied client-side (D-19) — API does not document startDate/endDate query params
 - AdminLayout Transacoes submenu uses $state txnOpen + $derived isTxnActive for collapsible behavior
 
+## Decisions Made in Plan 03-02
+
+- PaymentMethodCard receives full Payment entity to keep conditional logic (method + data presence) co-located with rendering
+- Route uses `$page.params.id ?? ''` nullish coalescing — SvelteKit types params as `string | undefined` but route guarantees existence
+- Controller initialized once at component creation — stable route param, page remounts on navigation
+
 ## Next Action
 
-Phase 03 Plan 01 complete. Ready for Plan 03-02: Withdrawals list page.
+Phase 03 Plan 02 complete. Ready for Plan 03-03: Withdrawals list page.
