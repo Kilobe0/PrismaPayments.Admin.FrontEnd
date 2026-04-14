@@ -6,7 +6,7 @@
   import {
     LayoutDashboard, Users, CreditCard, ArrowDownToLine,
     AlertTriangle, DollarSign, BookOpen, Plug, Activity,
-    UserCog, LogOut, ScanFace
+    UserCog, LogOut, ScanFace, ChevronDown
   } from 'lucide-svelte';
   import { hasPermission, type AdminRole } from '$appmod/shared/guards/adminGuard';
   import { env } from '$core/config/env';
@@ -15,6 +15,9 @@
 
   let pendingKYCCount = $state(0);
   const isPendingActive = $derived($page.url.pathname === '/merchants' && $page.url.searchParams.get('verification') === 'PENDING_REVIEW');
+
+  let txnOpen = $state(false);
+  const isTxnActive = $derived($page.url.pathname.startsWith('/transactions'));
 
   import { apiClient } from '$appmod/services/api/apiClient';
 
@@ -33,8 +36,6 @@
   const baseNavItems = [
     { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
     { href: '/merchants', label: 'Merchants', Icon: Users },
-    { href: '/transactions/payments', label: 'Pagamentos', Icon: CreditCard },
-    { href: '/transactions/withdrawals', label: 'Saques', Icon: ArrowDownToLine },
     { href: '/disputes', label: 'Disputas', Icon: AlertTriangle },
     { href: '/fees', label: 'Taxas', Icon: DollarSign },
     { href: '/audit', label: 'Auditoria', Icon: BookOpen },
@@ -91,6 +92,84 @@
           {item.label}
         </a>
       {/each}
+
+      <!-- Transacoes — submenu colapsavel -->
+      <button
+        type="button"
+        onclick={() => (txnOpen = !txnOpen)}
+        style="
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 9px 12px 9px {isTxnActive ? '10px' : '12px'};
+          border-radius: 10px;
+          font-size: 0.875rem;
+          font-weight: {isTxnActive ? '700' : '400'};
+          color: {isTxnActive ? 'var(--color-foreground, #F6F6FF)' : 'var(--color-foreground-secondary, #9090A8)'};
+          background: {isTxnActive ? 'var(--color-surface-elevated, #141420)' : 'transparent'};
+          border-left: {isTxnActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
+          box-shadow: {isTxnActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
+          border-top: none; border-right: none; border-bottom: none;
+          cursor: pointer;
+          width: 100%;
+          transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+          min-height: 44px;
+        "
+      >
+        <CreditCard size={16} strokeWidth={1.5} />
+        Transações
+        <span style="margin-left: auto; display: flex; align-items: center; transition: transform 0.2s; transform: rotate({(txnOpen || isTxnActive) ? '180deg' : '0deg'});">
+          <ChevronDown size={14} strokeWidth={1.5} />
+        </span>
+      </button>
+      {#if txnOpen || isTxnActive}
+        {@const isPaymentsActive = $page.url.pathname.startsWith('/transactions/payments')}
+        {@const isWithdrawalsActive = $page.url.pathname.startsWith('/transactions/withdrawals')}
+        <a
+          href="/transactions/payments"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px 9px {isPaymentsActive ? '38px' : '40px'};
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 400;
+            font-family: 'Outfit', sans-serif;
+            color: {isPaymentsActive ? 'var(--color-foreground, #F6F6FF)' : 'var(--color-foreground-secondary, #9090A8)'};
+            background: {isPaymentsActive ? 'var(--color-surface-elevated, #141420)' : 'transparent'};
+            border-left: {isPaymentsActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
+            box-shadow: {isPaymentsActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+            min-height: 40px;
+          "
+        >
+          Pagamentos
+        </a>
+        <a
+          href="/transactions/withdrawals"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px 9px {isWithdrawalsActive ? '38px' : '40px'};
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 400;
+            font-family: 'Outfit', sans-serif;
+            color: {isWithdrawalsActive ? 'var(--color-foreground, #F6F6FF)' : 'var(--color-foreground-secondary, #9090A8)'};
+            background: {isWithdrawalsActive ? 'var(--color-surface-elevated, #141420)' : 'transparent'};
+            border-left: {isWithdrawalsActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
+            box-shadow: {isWithdrawalsActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+            min-height: 40px;
+          "
+        >
+          Saques
+        </a>
+      {/if}
 
       <!-- Verificações Pendentes — link dedicado com badge -->
       <a

@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-last_updated: "2026-04-07T15:33:24.725Z"
+last_updated: "2026-04-01T17:22:22.920Z"
 progress:
   total_phases: 9
   completed_phases: 3
@@ -13,9 +13,9 @@ progress:
 
 # Project State
 
-**Last updated:** 2026-03-25
-**Status:** Ready to plan
-**Last session:** 2026-04-07T15:33:24.720Z
+**Last updated:** 2026-04-14
+**Status:** In Progress
+**Last session:** 2026-04-14T00:20:17Z
 
 ## Accumulated Context
 
@@ -33,12 +33,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Equipe interna opera a plataforma de pagamentos — aprovações, disputas, monitoramento — com interface confiável e RBAC.
-**Current focus:** Phase 02 — merchants
+**Current focus:** Phase 03 — transactions
 
 ## Current Position
 
 Phase: 3
-Plan: Not started
+Plan: 1 (complete)
+Current Plan: 03-01 complete
 
 ## Current Phase
 
@@ -106,6 +107,7 @@ Phase 1 completa — todos os 5 planos executados.
 | Phase 01.1-shadcn-init-e-identidade-visual-prisma P03 | 10 | 2 tasks | 5 files |
 | Phase 02 P03 | 8 min | 2 tasks | 4 files |
 | Phase 02 P04 | 8 min | 2 tasks | 7 files |
+| 03 | 01 | 6 min | 2/2 | 25 |
 
 ## Decisions Made in Plan 01-03
 
@@ -144,6 +146,13 @@ Phase 1 completa — todos os 5 planos executados.
 - StatusBadge has no type prop — only status prop, confirmed from real implementation
 - pdfjs-dist CDN worker URL used to avoid vite config changes for worker bundling
 
+## Decisions Made in Plan 03-01
+
+- range-calendar manually created (bits-ui RangeCalendar.Root + Calendar sub-components) — shadcn-svelte CLI blocked on interactive button overwrite prompt
+- MerchantAutocomplete uses custom div dropdown (not shadcn Select) — Select does not support async search
+- DateRangePicker date filter applied client-side (D-19) — API does not document startDate/endDate query params
+- AdminLayout Transacoes submenu uses $state txnOpen + $derived isTxnActive for collapsible behavior
+
 ## Next Action
 
-Phase 02 Plan 03 complete. Ready for Plan 02-04: Merchant Credentials + Transactions tabs.
+Phase 03 Plan 01 complete. Ready for Plan 03-02: Withdrawals list page.

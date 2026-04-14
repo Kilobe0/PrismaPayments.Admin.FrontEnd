@@ -29,6 +29,17 @@
     INACTIVE:       { color: '#9090A8', background: 'rgba(144,144,168,0.10)', border: 'rgba(144,144,168,0.20)' },
     UNVERIFIED:     { color: '#9090A8', background: 'rgba(144,144,168,0.10)', border: 'rgba(144,144,168,0.20)' },
     MED:            { color: '#FF3B5C', background: 'rgba(255,59,92,0.15)', border: 'rgba(255,59,92,0.30)', isMed: true },
+    // Payment statuses
+    CREATED:    { color: '#FFB300', background: 'rgba(255,179,0,0.10)', border: 'rgba(255,179,0,0.20)' },
+    PAID:       { color: '#00E676', background: 'rgba(0,230,118,0.10)', border: 'rgba(0,230,118,0.20)' },
+    FAILED:     { color: '#FF3B5C', background: 'rgba(255,59,92,0.10)', border: 'rgba(255,59,92,0.20)' },
+    CANCELLED:  { color: '#9090A8', background: 'rgba(144,144,168,0.10)', border: 'rgba(144,144,168,0.20)' },
+    REFUNDED:   { color: '#FFB300', background: 'rgba(255,179,0,0.10)', border: 'rgba(255,179,0,0.20)' },
+    EXPIRED:    { color: '#9090A8', background: 'rgba(144,144,168,0.10)', border: 'rgba(144,144,168,0.20)' },
+    // Withdrawal statuses
+    REQUESTED:  { color: '#FFB300', background: 'rgba(255,179,0,0.10)', border: 'rgba(255,179,0,0.20)' },
+    PROCESSING: { color: '#01FAFB', background: 'rgba(1,250,251,0.10)', border: 'rgba(1,250,251,0.20)' },
+    COMPLETED:  { color: '#00E676', background: 'rgba(0,230,118,0.10)', border: 'rgba(0,230,118,0.20)' },
   };
 
   const DEFAULT_VARIANT: BadgeVariant = {
