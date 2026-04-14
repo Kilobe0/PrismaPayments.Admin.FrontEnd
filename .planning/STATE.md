@@ -2,20 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-04-01T17:22:22.920Z"
+current_plan: 03-01 complete
+status: executing
+last_updated: "2026-04-14T20:52:15.460Z"
 progress:
   total_phases: 9
   completed_phases: 3
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 15
+  completed_plans: 14
 ---
 
 # Project State
 
 **Last updated:** 2026-04-14
 **Status:** In Progress
-**Last session:** 2026-04-14T00:20:17Z
+**Last session:** 2026-04-14T20:52:15.457Z
 
 ## Accumulated Context
 
@@ -38,8 +39,8 @@ See: .planning/PROJECT.md (updated 2026-03-24)
 ## Current Position
 
 Phase: 3
-Plan: 2 (complete)
-Current Plan: 03-02 complete
+Plan: 1 (complete)
+Current Plan: 03-01 complete
 
 ## Current Phase
 
@@ -108,7 +109,7 @@ Phase 1 completa — todos os 5 planos executados.
 | Phase 02 P03 | 8 min | 2 tasks | 4 files |
 | Phase 02 P04 | 8 min | 2 tasks | 7 files |
 | 03 | 01 | 6 min | 2/2 | 25 |
-| 03 | 02 | 8 min | 2/2 | 4 |
+| Phase 03 P03 | 5min | 2 tasks | 7 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -154,12 +155,12 @@ Phase 1 completa — todos os 5 planos executados.
 - DateRangePicker date filter applied client-side (D-19) — API does not document startDate/endDate query params
 - AdminLayout Transacoes submenu uses $state txnOpen + $derived isTxnActive for collapsible behavior
 
-## Decisions Made in Plan 03-02
+## Decisions Made in Plan 03-03
 
-- PaymentMethodCard receives full Payment entity to keep conditional logic (method + data presence) co-located with rendering
-- Route uses `$page.params.id ?? ''` nullish coalescing — SvelteKit types params as `string | undefined` but route guarantees existence
-- Controller initialized once at component creation — stable route param, page remounts on navigation
+- MerchantTransactionsTab cross-nav link already present from plan 02-04 — no modification needed for D-16 requirement
+- WithdrawalsListPage reuses exact same CSS class pattern as PaymentsListPage for visual consistency
+- withdrawalDetailController static ID capture is correct — controller is created fresh per SvelteKit route mount
 
 ## Next Action
 
-Phase 03 Plan 02 complete. Ready for Plan 03-03: Withdrawals list page.
+Phase 03 Plan 03 complete. TXN-04 and TXN-05 requirements satisfied. Withdrawals feature complete.
