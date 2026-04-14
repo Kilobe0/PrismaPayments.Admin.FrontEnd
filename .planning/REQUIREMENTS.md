@@ -55,8 +55,8 @@
 - [ ] **TXN-01**: Lista paginada de pagamentos cross-merchant com filtros: merchant, status, método de pagamento, período
 - [ ] **TXN-02**: Coluna "Merchant" nas listas de transações com link navegável para detalhe do merchant
 - [ ] **TXN-03**: Detalhe de pagamento: dados completos incluindo info de PIX, Boleto ou Cartão conforme método
-- [ ] **TXN-04**: Lista paginada de saques cross-merchant com filtros: merchant, status
-- [ ] **TXN-05**: Detalhe de saque: dados do recipient (chave PIX e tipo), status, valores bruto/taxa/líquido
+- [x] **TXN-04**: Lista paginada de saques cross-merchant com filtros: merchant, status
+- [x] **TXN-05**: Detalhe de saque: dados do recipient (chave PIX e tipo), status, valores bruto/taxa/líquido
 
 ### Disputas
 

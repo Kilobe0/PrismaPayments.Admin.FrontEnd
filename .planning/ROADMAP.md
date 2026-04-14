@@ -137,7 +137,7 @@ Plans:
 | 1. Auth + Core Infrastructure | 5/5 | Complete   | 2026-03-25 |
 | 01.1. shadcn init + identidade visual | 3/3 | Complete    | 2026-03-25 |
 | 2. Merchants | 3/4 | In Progress|  |
-| 3. Transactions | 1/3 | In Progress | - |
+| 3. Transactions | 2/3 | In Progress|  |
 | 4. Disputes | 0/0 | Not started | - |
 | 5. Fees | 0/0 | Not started | - |
 | 6. Admin Users | 0/0 | Not started | - |
