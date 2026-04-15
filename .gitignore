@@ -6,3 +6,6 @@ build/
 !.env.example
 err.html
 vite_log.txt
+
+# Claude Code — worktrees temporários de agentes GSD
+.claude/worktrees/
