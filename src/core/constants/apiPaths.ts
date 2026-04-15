@@ -1,7 +1,7 @@
 export const API_PATHS = {
   // Auth
   AUTH_ADMIN_LOGIN: '/api/v1/auth/admin/login',
-  AUTH_REFRESH: '/api/v1/auth/refresh',
+  AUTH_REFRESH: '/api/v1/auth/admin/refresh',
 
   // Admin Users
   ADMIN_USERS: '/api/v1/admin/users',

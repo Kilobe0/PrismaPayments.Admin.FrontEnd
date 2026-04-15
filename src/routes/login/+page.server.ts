@@ -1,6 +1,7 @@
 import type { Actions } from './$types';
 import { fail } from '@sveltejs/kit';
 import { env as privateEnv } from '$env/dynamic/private';
+import axios from 'axios';
 
 export const actions: Actions = {
   login: async ({ request, cookies }) => {
@@ -12,30 +13,29 @@ export const actions: Actions = {
       return fail(400, { error: 'E-mail ou senha inválidos.' });
     }
 
-    let res: Response;
+    let res;
     try {
-      res = await fetch(`${privateEnv.PRIVATE_API_BASE_URL}/api/v1/auth/admin/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'client-secret': privateEnv.PRIVATE_CLIENT_SECRET
-        },
-        body: JSON.stringify({ email, password })
-      });
+      res = await axios.post(
+        `${privateEnv.PRIVATE_API_BASE_URL}/api/v1/auth/admin/login`,
+        { email, password },
+        {
+          timeout: 15000,
+          validateStatus: () => true,
+          headers: {
+            'Content-Type': 'application/json',
+            'client-secret': privateEnv.PRIVATE_CLIENT_SECRET
+          }
+        }
+      );
     } catch {
       return fail(503, { error: 'Falha ao conectar. Tente novamente.' });
     }
 
-    let body: {
+    const body: {
       responseType?: string;
       data?: { accessToken: string; refreshToken: string; expiresIn?: number };
       message?: string;
-    };
-    try {
-      body = await res.json();
-    } catch {
-      return fail(503, { error: 'Falha ao conectar. Tente novamente.' });
-    }
+    } = res.data;
 
     if (!body?.data?.accessToken) {
       return fail(401, { error: body.message ?? 'E-mail ou senha inválidos.' });

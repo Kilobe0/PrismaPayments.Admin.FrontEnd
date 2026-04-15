@@ -4,21 +4,19 @@
   import { tokenStorage } from '$appmod/services/storage/tokenStorage';
   import { onMount } from 'svelte';
 
+  let formEl: HTMLFormElement;
+
   onMount(() => {
-    // Clear sessionStorage and submit the form to clear server-side cookies
     tokenStorage.clearTokens();
+    formEl.requestSubmit();
   });
 </script>
 
-<form method="POST" use:enhance={() => {
-  return async ({ result }) => {
+<form bind:this={formEl} method="POST" use:enhance={() => {
+  return async () => {
     tokenStorage.clearTokens();
     await goto('/login');
   };
 }}>
   <button type="submit" style="display:none">Logout</button>
 </form>
-
-<script module>
-  // Auto-submit on mount via JS
-</script>

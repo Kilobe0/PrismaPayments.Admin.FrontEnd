@@ -1,3 +1,4 @@
+import axios, { AxiosError, type AxiosInstance } from 'axios';
 import { env } from '$core/config/env';
 import { API_PATHS } from '$core/constants/apiPaths';
 import type { ApiResponse } from './apiResponse';
@@ -18,32 +19,35 @@ export interface RequestOptions {
 let isRefreshing = false;
 let refreshQueue: Array<(token: string | null) => void> = [];
 
+const http: AxiosInstance = axios.create({
+  baseURL: env.apiBaseUrl,
+  timeout: 25000,
+  validateStatus: () => true, // Gerencia todos os status manualmente, como fetch
+});
+
 async function refreshAccessToken(): Promise<string | null> {
   const refreshToken = tokenStorage.getRefreshToken();
   if (!refreshToken) return null;
 
   try {
-    const refreshController = new AbortController();
-    const refreshTimeoutId = setTimeout(() => refreshController.abort(), 10000);
-    const res = await fetch(`${env.apiBaseUrl}${API_PATHS.AUTH_REFRESH}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'client-secret': env.clientSecret
-      },
-      body: JSON.stringify({ refreshToken }),
-      signal: refreshController.signal
-    });
-    clearTimeout(refreshTimeoutId);
-    const body = await res.json() as ApiResponse<{ accessToken: string; refreshToken: string; expiresIn?: number }>;
+    const res = await axios.post<ApiResponse<{ accessToken: string; refreshToken: string; expiresIn?: number }>>(
+      `${env.apiBaseUrl}${API_PATHS.AUTH_REFRESH}`,
+      { refreshToken },
+      {
+        timeout: 10000,
+        validateStatus: () => true,
+        headers: {
+          'Content-Type': 'application/json',
+          'client-secret': env.clientSecret
+        }
+      }
+    );
+    const body = res.data;
     if ((body.status === 200 || body.status === 201) && body.data?.accessToken) {
       tokenStorage.setTokens(body.data.accessToken, body.data.refreshToken);
       // Sincroniza cookie HttpOnly no servidor (fire-and-forget)
-      fetch('/api/internal/sync-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessToken: body.data.accessToken })
-      }).catch(() => {/* ignorar falhas de sync — SSR ainda funciona até próxima navegação */});
+      axios.post('/api/internal/sync-token', { accessToken: body.data.accessToken })
+        .catch(() => {/* ignorar falhas de sync — SSR ainda funciona até próxima navegação */});
       return body.data.accessToken;
     }
   } catch {
@@ -58,46 +62,38 @@ async function request<T>(
 ): Promise<ApiResponse<T>> {
   const { method = 'GET', body, params, skipAuth = false, _isRetry = false } = options;
 
-  let url = `${env.apiBaseUrl}${path}`;
-  if (params) {
-    const query = Object.entries(params)
-      .filter(([, v]) => v !== undefined && v !== null)
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
-      .join('&');
-    if (query) url += `?${query}`;
-  }
+  const cleanParams = params
+    ? Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== null))
+    : undefined;
 
   const headers: Record<string, string> = {
     'client-secret': env.clientSecret
   };
 
   const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
-  
+
   if (!isFormData) {
     headers['Content-Type'] = 'application/json';
   }
+  // Para FormData, axios define Content-Type com boundary automaticamente
 
   if (!skipAuth) {
     const token = tokenStorage.getAccessToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+    if (token) headers['Authorization'] = `Bearer ${token}`;
   }
 
-  let response: Response;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 25000);
+  let res;
   try {
-
-    console.log(`[apiClient] ${method} ${url}`);
-    response = await fetch(url, {
+    console.log(`[apiClient] ${method} ${env.apiBaseUrl}${path}`);
+    res = await http.request<ApiResponse<T>>({
       method,
-      headers,
-      body: body ? (isFormData ? body as FormData : JSON.stringify(body)) : undefined,
-      signal: controller.signal
+      url: path,
+      params: cleanParams,
+      data: body,
+      headers
     });
   } catch (err) {
-    const isTimeout = err instanceof DOMException && err.name === 'AbortError';
+    const isTimeout = err instanceof AxiosError && err.code === 'ECONNABORTED';
     return {
       responseType: 'INTERNAL_SERVER_ERROR',
       message: isTimeout
@@ -109,40 +105,35 @@ async function request<T>(
       extendedResultCode: isTimeout ? 'TIMEOUT' : 'NETWORK_ERROR',
       date: new Date().toISOString()
     } as ApiResponse<T>;
-  } finally {
-    clearTimeout(timeoutId);
   }
 
-  let data: ApiResponse<T>;
-  try {
-    data = await response.json() as ApiResponse<T>;
-  } catch {
+  // Resposta com body inválido (ex: HTML de erro 500 do servidor)
+  if (!res.data || typeof res.data !== 'object') {
     return {
       responseType: 'INTERNAL_SERVER_ERROR',
       message: 'Falha ao conectar. Tente novamente.',
       title: 'Erro de resposta',
-      status: response.status,
+      status: res.status,
       data: null,
       extendedResultCode: 'PARSE_ERROR',
       date: new Date().toISOString()
     } as ApiResponse<T>;
   }
 
+  const data = res.data;
+
   // Interceptor de 429: retry automático para requests secundários (pequenos delays)
   // Não espera mais que 10s para não travar a UX do usuário
-  if (response.status === 429) {
+  if (res.status === 429) {
     const retryCount = options._retryCount ?? 0;
     if (retryCount < 2) {
-      // Lê o header de reset (em segundos) — mas limita a 10s para não travar a UX
-      const resetHeader = response.headers.get('x-ratelimit-reset') ||
-                          response.headers.get('Retry-After');
-      const rawWait = resetHeader ? parseInt(resetHeader, 10) : 5;
+      const resetHeader = res.headers['x-ratelimit-reset'] ?? res.headers['retry-after'];
+      const rawWait = resetHeader ? parseInt(String(resetHeader), 10) : 5;
       const waitSeconds = Math.min(rawWait, 10); // máx 10s de espera silenciosa
       console.warn(`[apiClient] 429 Rate Limit — aguardando ${waitSeconds}s antes de retentar (tentativa ${retryCount + 1}/2)`);
       await new Promise<void>(r => setTimeout(r, waitSeconds * 1000));
       return request<T>(path, { ...options, _retryCount: retryCount + 1 });
     }
-    // Esgotou retries — retorna o erro 429 normalmente
     return {
       responseType: 'INTERNAL_SERVER_ERROR',
       message: 'Muitas requisições. Tente novamente em breve.',
@@ -155,7 +146,7 @@ async function request<T>(
   }
 
   // Interceptor de refresh: apenas para requisições autenticadas não-retry
-  if (response.status === 401 && !skipAuth && !_isRetry) {
+  if (res.status === 401 && !skipAuth && !_isRetry) {
     if (!isRefreshing) {
       isRefreshing = true;
       const newToken = await refreshAccessToken();
