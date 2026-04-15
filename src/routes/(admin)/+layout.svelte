@@ -5,16 +5,14 @@
   import { tokenStorage } from '$appmod/services/storage/tokenStorage';
   import type { Snippet } from 'svelte';
 
-  let { children, data }: { children: Snippet; data: { adminRole: string | null } } = $props();
+  let { children }: { children: Snippet } = $props();
 
-  // Role vem do SSR (data.adminRole) mas o setContext precisa ser reativo ao sessionStorage
-  // para o caso de SPA navigation (o SSR já validou; aqui apenas disponibilizamos no cliente)
-  const roleFromSSR = data.adminRole;
+  const role = tokenStorage.getAdminRole();
 
-  setContext('adminRole', roleFromSSR ?? tokenStorage.getAdminRole());
+  setContext('adminRole', role);
 </script>
 
-<AdminLayout role={roleFromSSR ?? tokenStorage.getAdminRole()}>
+<AdminLayout {role}>
   {#snippet content()}
     {@render children()}
   {/snippet}

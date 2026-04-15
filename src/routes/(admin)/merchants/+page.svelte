@@ -1,8 +1,6 @@
 <script lang="ts">
   import MerchantsListPage from '$appmod/features/merchants/presentation/pages/MerchantsListPage.svelte';
-  import type { LayoutData } from '../$types';
-
-  let { data }: { data: LayoutData } = $props();
+  import { tokenStorage } from '$appmod/services/storage/tokenStorage';
 </script>
 
-<MerchantsListPage role={data.adminRole ?? null} />
+<MerchantsListPage role={tokenStorage.getAdminRole()} />

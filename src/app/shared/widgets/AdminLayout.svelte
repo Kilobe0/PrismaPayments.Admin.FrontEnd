@@ -125,50 +125,24 @@
       {#if txnOpen || isTxnActive}
         {@const isPaymentsActive = $page.url.pathname.startsWith('/transactions/payments')}
         {@const isWithdrawalsActive = $page.url.pathname.startsWith('/transactions/withdrawals')}
-        <a
-          href="/transactions/payments"
-          style="
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px 9px {isPaymentsActive ? '38px' : '40px'};
-            border-radius: 10px;
-            font-size: 0.875rem;
-            font-weight: 400;
-            font-family: 'Outfit', sans-serif;
-            color: {isPaymentsActive ? 'var(--color-foreground, #F6F6FF)' : 'var(--color-foreground-secondary, #9090A8)'};
-            background: {isPaymentsActive ? 'var(--color-surface-elevated, #141420)' : 'transparent'};
-            border-left: {isPaymentsActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
-            box-shadow: {isPaymentsActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
-            text-decoration: none;
-            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-            min-height: 40px;
-          "
-        >
-          Pagamentos
-        </a>
-        <a
-          href="/transactions/withdrawals"
-          style="
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 9px 12px 9px {isWithdrawalsActive ? '38px' : '40px'};
-            border-radius: 10px;
-            font-size: 0.875rem;
-            font-weight: 400;
-            font-family: 'Outfit', sans-serif;
-            color: {isWithdrawalsActive ? 'var(--color-foreground, #F6F6FF)' : 'var(--color-foreground-secondary, #9090A8)'};
-            background: {isWithdrawalsActive ? 'var(--color-surface-elevated, #141420)' : 'transparent'};
-            border-left: {isWithdrawalsActive ? '2px solid var(--color-brand-magenta)' : '2px solid transparent'};
-            box-shadow: {isWithdrawalsActive ? 'inset 2px 0 10px rgba(255, 0, 255, 0.12)' : 'none'};
-            text-decoration: none;
-            transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-            min-height: 40px;
-          "
-        >
-          Saques
-        </a>
+        <div class="subnav-group">
+          <a
+            href="/transactions/payments"
+            class="subnav-item"
+            class:subnav-item--active={isPaymentsActive}
+          >
+            <span class="subnav-dot" class:subnav-dot--active={isPaymentsActive}></span>
+            Pagamentos
+          </a>
+          <a
+            href="/transactions/withdrawals"
+            class="subnav-item"
+            class:subnav-item--active={isWithdrawalsActive}
+          >
+            <span class="subnav-dot" class:subnav-dot--active={isWithdrawalsActive}></span>
+            Saques
+          </a>
+        </div>
       {/if}
 
       <!-- Verificações Pendentes — link dedicado com badge -->
@@ -228,6 +202,69 @@
 </div>
 
 <style>
+  /* Subitem group — linha guia vertical */
+  .subnav-group {
+    position: relative;
+    margin-left: 26px;
+    padding-left: 14px;
+    border-left: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-top: 1px;
+    margin-bottom: 2px;
+  }
+
+  .subnav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.8125rem; /* 13px — menor que o pai */
+    font-weight: 400;
+    color: #5a5a72;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    min-height: 34px;
+  }
+
+  .subnav-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #9090a8;
+  }
+
+  .subnav-item--active {
+    background: rgba(20, 20, 32, 0.8);
+    color: #f6f6ff;
+    font-weight: 500;
+  }
+
+  .subnav-item--active:hover {
+    background: rgba(20, 20, 32, 0.8);
+    color: #f6f6ff;
+  }
+
+  /* Dot indicador */
+  .subnav-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #3a3a50;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .subnav-dot--active {
+    background: #ff00ff;
+    box-shadow: 0 0 6px rgba(255, 0, 255, 0.5);
+  }
+
+  .subnav-item:hover .subnav-dot:not(.subnav-dot--active) {
+    background: #9090a8;
+  }
+
   .nav-badge {
     display: inline-flex;
     align-items: center;
