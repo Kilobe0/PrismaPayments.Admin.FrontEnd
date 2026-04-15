@@ -62,14 +62,14 @@ Source: StyleGuide.md + app.css + Phase 3 PaymentDetailPage reference
 
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
-| Caption / Label | 12px (0.75rem) | 500 Medium | 1.50 | Outfit | StatusBadge text, table column headers (uppercase + letter-spacing: 0.05em) |
+| Caption / Label | 12px (0.75rem) | 400 Regular | 1.50 | Outfit | StatusBadge text, table column headers (uppercase + letter-spacing: 0.05em) |
 | Body-sm | 14px (0.875rem) | 400 Regular | 1.55 | Outfit | Table cell data, filter labels, secondary detail values |
 | Body | 16px (1rem) | 400 Regular | 1.60 | Outfit | Card body text, textarea placeholder, resolution text |
 | H5 / Section heading | 20px (1.25rem) | 600 Semibold | 1.40 | Space Grotesk | Card titles ("Informações da Disputa", "Timeline", "Resolução") |
 
 **Rules:**
 - All status badge text: uppercase, letter-spacing 0.05em (existing StatusBadge style)
-- All labels and captions: uppercase with letter-spacing (StyleGuide requirement)
+- All labels and captions: uppercase with letter-spacing (StyleGuide requirement) — visual distinction achieved via uppercase + letter-spacing 0.05em, not via weight change
 - Heading font (Space Grotesk) reserved for card section titles and page h1
 - Body font (Outfit) for all data, inputs, dropdowns, breadcrumbs
 
@@ -84,7 +84,7 @@ Source: StyleGuide.md typography scale
 | Dominant (60%) | `#070707` (background) / `#0A0A0F` (subtle) | Page background, list area background |
 | Secondary (30%) | `#0F0F18` (surface) / `#141420` (elevated) | Cards (detail page stacked cards), table rows, filter bar background |
 | Accent — magenta (10%) | `#FF00FF` | Primary CTA button ("Salvar Resolução"), focus ring on all inputs, active state indicator |
-| Accent — cyan | `#01FAFB` | PROCESSING status badge, info-level indicators |
+| Accent — cyan | `#01FAFB` | PROCESSING status badge, DisputeTimeline completed-step circles, cross-navigation links, filter-clear link |
 | MED highlight | `#FF3B5C` (danger) | Border-left 3px on MED rows, MED badge (existing STATUS_MAP entry), pulsing animation |
 | Success | `#00E676` | RESOLVED / ACCEPTED / ACTIVE status badges |
 | Warning | `#FFB300` | OPEN / UNDER_REVIEW / PENDING status badges |
@@ -101,7 +101,10 @@ Source: StyleGuide.md typography scale
 3. Active/selected filter pills (if any)
 
 **Accent (cyan) reserved for:**
-1. PROCESSING dispute status badge only
+1. PROCESSING dispute status badge
+2. DisputeTimeline completed-step circles
+3. Cross-navigation links (Merchant detail, Payment detail)
+4. Filter-clear link ("Limpar filtros")
 
 **MED danger color reserved for:**
 1. Border-left 3px on DataTable rows where `disputeType === "MED"` — pulsing animation (existing `.status-badge--med` pattern extended to row)
@@ -149,6 +152,7 @@ Source: StyleGuide.md + app.css custom properties + existing StatusBadge.svelte
 ```
 Page padding: 48px 24px (matches PaymentDetailPage)
 Max-width: 1200px centered (list pages wider than detail)
+Primary visual anchor: DataTable with MED row border-left highlight
 
 ┌─ Breadcrumbs: "Disputas" (single segment, current page) ──────────────┐
 ├─ Page title: "Disputas" — Space Grotesk 20px 600 ────────────────────┤
@@ -169,6 +173,7 @@ Max-width: 1200px centered (list pages wider than detail)
 ```
 Page padding: 48px 24px
 Max-width: 900px centered (matching PaymentDetailPage)
+Primary visual anchor: Card 1 — Informações da Disputa (entry point)
 
 ┌─ Breadcrumbs: "Disputas" > "#abc12345" ───────────────────────────────┐
 ├─ Card 1: Informações da Disputa ───────────────────────────────────────┤
@@ -204,8 +209,8 @@ Step states:
 
 Circle size: 24px diameter
 Connector height/thickness: 2px, width: flexible (fills gap between circles)
-Step label: 12px Outfit 500, uppercase, letter-spacing 0.05em, color foreground-secondary
-Timestamp: 11px Outfit 400, color foreground-secondary (#9090A8), below label
+Step label: 12px Outfit 400, uppercase, letter-spacing 0.05em, color foreground-secondary
+Timestamp: 12px Outfit 400, color foreground-secondary (#9090A8), below label
 ```
 
 **Step active logic:**
@@ -218,10 +223,10 @@ Timestamp: 11px Outfit 400, color foreground-secondary (#9090A8), below label
 Background: transparent (sits inside Card 4)
 Gap between elements: 16px
 
-Label "Status de Resolução" — 12px Outfit 500 uppercase
+Label "Status de Resolução" — 12px Outfit 400 uppercase
 [Select dropdown — ACCEPTED | REJECTED | RESOLVED]
 
-Label "Texto de Resolução" — 12px Outfit 500 uppercase
+Label "Texto de Resolução" — 12px Outfit 400 uppercase
 [Textarea — min-height: 96px, placeholder: "Descreva a resolução..."]
 
 [Salvar Resolução] — Button primary (magenta gradient)
@@ -383,3 +388,7 @@ Label "Texto de Resolução" — 12px Outfit 500 uppercase
 | Timeline active step color | Claude's discretion — magenta for current step (brand primary), cyan for completed (matches PROCESSING badge pattern) |
 | Post-submit behavior | Claude's discretion — redirect to list (avoids stale resolved state) |
 | ID truncation: 8 chars | Phase 3 D-15 pattern, PaymentDetailPage.svelte substring(0,8) |
+| Typography: 500 Medium dropped | ui-checker Issue 2 — label distinction achieved via uppercase + letter-spacing 0.05em |
+| Cyan reserved-for list expanded | ui-checker Flag 2 — 4 uses enumerated (badge, timeline, cross-nav links, filter-clear) |
+| Primary visual anchors added | ui-checker Flag 1 — declared per page in Layout Contracts |
+| Timestamp size: 11px → 12px | ui-checker Issue 1 — unified to declared Caption size |
