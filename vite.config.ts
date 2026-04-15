@@ -5,6 +5,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   server: {
+    watch: {
+      ignored: ['**/.claude/**']
+    },
     warmup: {
       clientFiles: [
         './src/routes/(admin)/dashboard/+page.svelte',
