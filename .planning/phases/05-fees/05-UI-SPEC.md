@@ -56,19 +56,21 @@ Source: `docs/StyleGuide.md` §Espaçamentos
 
 ## Typography
 
-All sizes from the Prisma type scale. This phase uses 4 roles:
+All sizes from the Prisma type scale. This phase uses 4 roles and exactly 2 weights.
 
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
 | Body | 14px / 0.875rem | 400 Regular | 1.55 | Outfit Variable | Table cell values, form labels, input text, helper text |
-| Label | 12px / 0.75rem | 500 Medium | 1.50 | Outfit Variable | Column headers, badge text, conversion hints (`ℹ️ = X basis points`), section labels (uppercase + letter-spacing) |
+| Label | 12px / 0.75rem | 400 Regular | 1.50 | Outfit Variable | Column headers, badge text, conversion hints (`ℹ️ = X basis points`), section labels (uppercase + letter-spacing) |
 | Heading | 20px / 1.25rem | 600 Semibold | 1.40 | Space Grotesk Variable | Sheet title ("Nova Regra de Taxa" / "Editar Regra"), simulator panel heading, page section headings |
 | Display | 24px / 1.5rem | 600 Semibold | 1.30 | Space Grotesk Variable | Page-level heading `/fees` — "Taxas" |
 
 Rules:
-- Column headers in DataTable: 12px, weight 500, uppercase, letter-spacing 0.05em — source: StyleGuide "Labels e captions sempre em uppercase com letter-spacing"
+- Column headers in DataTable: 12px, weight 400, uppercase, letter-spacing 0.05em — Label role; visual distinction from Body (14px) is achieved via smaller size, uppercase, and letter-spacing without needing a third weight
 - Monetary values in table cells (R$, basis points): JetBrains Mono Variable, 14px, weight 400 — monospace for numeric alignment
 - Conversion hint text below inputs: 12px, weight 400, color `--color-foreground-secondary` (#9090A8)
+
+Weight budget: 2 weights only — 400 Regular and 600 Semibold. Weight 500 Medium is NOT used in this phase.
 
 Source: `docs/StyleGuide.md` §Tipografia
 
@@ -85,7 +87,7 @@ Prisma dark-mode palette. This phase is dark-mode only.
 | Secondary (30%) | `--color-surface` | `#0F0F18` | DataTable background, simulator panel card, Sheet drawer background |
 | Secondary elevated | `--color-surface-elevated` | `#141420` | Table row hover, active Tab trigger background |
 | Secondary overlay | `--color-surface-overlay` | `#1A1A28` | Input background, Select dropdown popover |
-| Accent (10%) | `--color-brand-magenta` | `#FF00FF` | Primary CTA buttons only: "+ Nova Regra Global", "+ Nova Regra", "Simular", "Salvar Regra" |
+| Accent (10%) | `--color-brand-magenta` | `#FF00FF` | Primary CTA buttons only: "+ Nova Regra Global", "+ Nova Regra", "Simular Taxa", "Salvar Regra" |
 | Accent secondary | `--color-brand-cyan` | `#01FAFB` | Simulator result values (netAmount highlighted); info conversion hints icon color |
 | Destructive | `--color-danger` | `#FF3B5C` | "Excluir" button and ConfirmDialog destructive action only |
 | Success | `--color-success` | `#00E676` | Toast de sucesso após criar/editar/excluir regra |
@@ -97,7 +99,7 @@ Prisma dark-mode palette. This phase is dark-mode only.
 Accent reserved for:
 1. Button "+ Nova Regra Global" (Tab Global, ADMIN+ only)
 2. Button "+ Nova Regra" (Tab Por Merchant, ADMIN+ only, disabled state when no merchant selected)
-3. Button "Simular" in the simulator panel
+3. Button "Simular Taxa" in the simulator panel
 4. Button "Salvar Regra" in the Sheet footer
 5. Active tab indicator underline (Tab.Trigger active state)
 
@@ -159,13 +161,21 @@ align-items: start;
 
 Source: CONTEXT.md D-04, RESEARCH.md Pattern 6
 
+### Focal Points
+
+Primary visual anchor: "+ Nova Regra Global" CTA in magenta (`--color-brand-magenta`) is the page's primary call to action — it is the only magenta element visible in the at-rest state of the table view.
+
+Secondary focal point: Simulator result `netAmount` displayed in cyan (`--color-brand-cyan`) with `--shadow-glow-cyan` — draws the eye to the key output after a simulation runs.
+
+All other elements use foreground or foreground-secondary color; no competing accent colors exist outside these two focal points.
+
 ### Tabs (Global / Por Merchant)
 
 - `shadcn-svelte Tabs.Root` with `value="global"` default
 - Tab list above the DataTable
 - "+ Nova Regra Global" button rendered to the right of the tab list, visible only when `canMutate` (ADMIN+)
 - Tab "Por Merchant": `MerchantAutocomplete` rendered above the DataTable when this tab is active
-- "+" Nova Regra" button disabled (`disabled={!ctrl.state.merchantId}`, opacity 0.38) until merchant is selected
+- "+ Nova Regra" button disabled (`disabled={!ctrl.state.merchantId}`, opacity 0.38) until merchant is selected
 
 Source: CONTEXT.md D-01
 
@@ -184,7 +194,7 @@ Source: CONTEXT.md D-02, RESEARCH.md Pattern 4
 - Sticky positioned in the right column
 - Background: `--color-surface`, border: `--color-border`, border-radius: `--radius-lg`
 - Padding: 24px
-- Result block appears below the "Simular" button after successful API call, with `--shadow-glow-cyan`
+- Result block appears below the "Simular Taxa" button after successful API call, with `--shadow-glow-cyan`
 
 Source: CONTEXT.md D-04
 
@@ -202,6 +212,17 @@ All from `docs/StyleGuide.md` §Estados Interativos:
 | Disabled | opacity: 0.38 + cursor: not-allowed. Never hide element |
 
 Exception for RBAC role guards: Buttons for ADMIN-only actions (create, edit, delete) are **removed from DOM entirely** (`{#if canMutate}`) — not disabled. This is the project's established DOM exclusion pattern. Disabled state (opacity 0.38) applies only to the "+ Nova Regra" button when no merchant is selected (same session, different reason).
+
+### Icon-Only Button Accessibility
+
+The DataTable "Ações" column contains icon-only buttons (Pencil and Trash2 icons). Both must carry explicit accessible labels:
+
+| Button | Icon | `aria-label` |
+|--------|------|--------------|
+| Edit rule | `Pencil` (lucide-svelte, 20px) | `aria-label="Editar regra"` |
+| Delete rule | `Trash2` (lucide-svelte, 20px) | `aria-label="Excluir regra"` |
+
+Implementation: `<button aria-label="Editar regra"><Pencil size={20} /></button>`. No visible text label is required — size, uppercase column context, and aria-label together satisfy accessibility contract.
 
 ---
 
@@ -238,7 +259,7 @@ All components already installed — no new npm installs required for this phase
 | Percentual | `percentageRate` | `formatBasisPoints(bp)` → "2,50%" (JetBrains Mono) | auto |
 | Valor Fixo | `fixedAmount` | `formatCurrency(centavos)` → "R$ 1,50" (JetBrains Mono) | auto |
 | Mín / Máx | `minFee` / `maxFee` | `formatCurrency()` / `formatCurrency()` or "—" if null | auto |
-| Ações | — | Pencil (edit) + Trash2 (delete) icons — shown only if `canMutate` | 80px |
+| Ações | — | Pencil (`aria-label="Editar regra"`) + Trash2 (`aria-label="Excluir regra"`) icons — shown only if `canMutate` | 80px |
 
 Default sort: by `feeType` ascending (client-side, consistent ordering).
 
@@ -279,7 +300,7 @@ Source: CONTEXT.md D-02, D-03; RESEARCH.md open question 2 recommendation
 Simulator result display (after API response):
 - "Valor bruto": `formatCurrency(grossAmount)` — foreground primary
 - "Taxa aplicada": `formatCurrency(feeAmount)` — foreground secondary
-- "Valor líquido": `formatCurrency(netAmount)` — `--color-brand-cyan` + semibold
+- "Valor líquido": `formatCurrency(netAmount)` — `--color-brand-cyan` + semibold (600)
 - "Regra utilizada": `ruleId` or "Nenhuma regra encontrada" if null — 12px mono
 
 ---
@@ -295,7 +316,7 @@ All strings in Brazilian Portuguese (pt-BR).
 | Tab 2 | "Por Merchant" |
 | Primary CTA — create global | "+ Nova Regra Global" |
 | Primary CTA — create merchant | "+ Nova Regra" |
-| Primary CTA — simulator | "Simular" |
+| Primary CTA — simulator | "Simular Taxa" |
 | Primary CTA — Sheet save (create) | "Salvar Regra" |
 | Primary CTA — Sheet save (edit) | "Salvar Alterações" |
 | Sheet title — create | "Nova Regra de Taxa" |
@@ -311,7 +332,7 @@ All strings in Brazilian Portuguese (pt-BR).
 | Error state — save failure | "Erro ao salvar a regra. Verifique os dados e tente novamente." |
 | Error state — delete failure | "Não foi possível excluir a regra. Tente novamente." |
 | Error state — simulator failure | "Não foi possível calcular a simulação. Verifique os dados e tente novamente." |
-| Simulator — no result yet | "Preencha os campos acima e clique em Simular." |
+| Simulator — no result yet | "Preencha os campos acima e clique em Simular Taxa." |
 | Simulator — no rule match | "Nenhuma regra encontrada para os parâmetros informados." |
 | Toast — rule created | "Regra criada com sucesso." |
 | Toast — rule updated | "Regra atualizada com sucesso." |
@@ -360,7 +381,7 @@ Source: REQUIREMENTS.md FEES-02, FEES-03; RESEARCH.md Role Guard pattern
 | DataTable (global rules loading) | `Skeleton` rows — 5 rows × column count, height 40px each |
 | DataTable (merchant rules loading) | Same skeleton pattern |
 | Sheet save button | `saving` state → button disabled + spinner icon replacing text |
-| Simulator "Simular" button | `simLoading` state → button disabled + spinner |
+| Simulator "Simular Taxa" button | `simLoading` state → button disabled + spinner |
 
 Ordering default: DataTable sorted by `feeType` ascending client-side. No server-side sort required.
 
@@ -414,3 +435,7 @@ Source: RESEARCH.md Standard Stack — "zero instalação nova necessária"
 | Registry safety | RESEARCH.md Standard Stack |
 | Icon library | `docs/StyleGuide.md` §Ícones |
 | Loading states | CONTEXT.md "Claude's Discretion" |
+| Typography weight collapse (2 weights) | UI checker revision 2026-04-16 — dropped weight 500 |
+| Focal point statement | UI checker revision 2026-04-16 — added explicit anchor declaration |
+| Icon-only aria-label contract | UI checker revision 2026-04-16 — Pencil + Trash2 buttons |
+| Simulator CTA label | UI checker revision 2026-04-16 — "Simular" → "Simular Taxa" (verb + noun) |
