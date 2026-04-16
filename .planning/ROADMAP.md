@@ -9,7 +9,7 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 - [x] **Phase 1: Auth + Core Infrastructure** - Corrigir o bug crítico de cookie, implementar refresh de token, ativar RBAC e construir todos os componentes compartilhados que as demais features dependem (completed 2026-03-25)
 - [ ] **Phase 2: Merchants** - Entrega completa da feature de merchants: lista paginada, detalhe tabulado, review de KYC, ações de status e criação — o template que todas as features seguintes copiam
 - [ ] **Phase 3: Transactions** - Listas cross-merchant de pagamentos e saques com filtros completos e páginas de detalhe por método de pagamento
-- [x] **Phase 4: Disputes** - Lista de disputas com destaque para MED time-sensitive, timeline visual e formulário de resolução para SUPPORT+ (completed 2026-04-16)
+- [x] **Phase 4: Disputes** - Lista de disputas com destaque para MED time-sensitive, timeline visual e formulário de resolução para SUPPORT+ (completed 2026-04-16)
 - [ ] **Phase 5: Fees** - CRUD de regras de taxas (globais e por merchant) com conversão basis-points/centavos e simulador inline
 - [ ] **Phase 6: Admin Users** - Gestão de usuários administrativos exclusiva para SUPER_ADMIN, completamente oculta para outros roles
 - [ ] **Phase 7: Audit + Diagnostics** - Log cronológico de auditoria com diff visual e logs HTTP diagnósticos com filtros avançados e trace view
@@ -96,8 +96,11 @@ Plans:
   2. Admin (ADMIN+) cria ou edita uma regra de taxa com tipo, cálculo percentual (basis points ↔ %) ou fixo (centavos ↔ R$) e limites mínimo/máximo opcionais — valores são convertidos e exibidos corretamente
   3. Admin (ADMIN+) exclui uma regra via dialog de confirmação — regra removida não aparece mais na lista
   4. Admin preenche o simulador com tipo, valor e merchant opcional e vê o resultado exibindo bruto, taxa aplicada e valor líquido com a regra que foi utilizada
-**Plans**: TBD
-**UI hint**: yes
+**Plans**: 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Domain + data layer + feesController + FeesListPage (Tabs + DataTable + Simulator panel)
+- [ ] 05-02-PLAN.md — FeeRuleSheet (create/edit com conversão $derived) + wire delete ConfirmDialog
 
 ### Phase 6: Admin Users
 **Goal**: SUPER_ADMIN consegue gerenciar o ciclo de vida completo de usuários administrativos; a feature é completamente invisível para todos os outros roles
@@ -143,7 +146,7 @@ Plans:
 | 2. Merchants | 4/4 | Complete   | 2026-04-01 |
 | 3. Transactions | 3/3 | Complete   | 2026-04-14 |
 | 4. Disputes | 2/2 | Complete   | 2026-04-16 |
-| 5. Fees | 0/0 | Not started | - |
+| 5. Fees | 0/2 | Planned | - |
 | 6. Admin Users | 0/0 | Not started | - |
 | 7. Audit + Diagnostics | 0/0 | Not started | - |
 | 8. Providers + Platform Config | 0/0 | Not started | - |
@@ -195,10 +198,10 @@ Plans:
 | DISP-02 | Phase 4 | Planned (04-02) |
 | DISP-03 | Phase 4 | Planned (04-02) |
 | DISP-04 | Phase 4 | Planned (04-01) |
-| FEES-01 | Phase 5 | Pending |
-| FEES-02 | Phase 5 | Pending |
-| FEES-03 | Phase 5 | Pending |
-| FEES-04 | Phase 5 | Pending |
+| FEES-01 | Phase 5 | Planned (05-01) |
+| FEES-02 | Phase 5 | Planned (05-02) |
+| FEES-03 | Phase 5 | Planned (05-02) |
+| FEES-04 | Phase 5 | Planned (05-01) |
 | ADMIN-01 | Phase 6 | Pending |
 | ADMIN-02 | Phase 6 | Pending |
 | ADMIN-03 | Phase 6 | Pending |
