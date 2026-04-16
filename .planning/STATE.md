@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 03-01 complete
+current_plan: 1
 status: executing
-last_updated: "2026-04-15T22:44:03.987Z"
+last_updated: "2026-04-16T17:12:25.582Z"
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 17
+  completed_plans: 16
 ---
 
 # Project State
 
 **Last updated:** 2026-04-14
-**Status:** In Progress
-**Last session:** 2026-04-15T22:44:03.982Z
+**Status:** Ready to execute
+**Last session:** 2026-04-16T17:12:25.579Z
 
 ## Accumulated Context
 
@@ -34,13 +34,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Equipe interna opera a plataforma de pagamentos — aprovações, disputas, monitoramento — com interface confiável e RBAC.
-**Current focus:** Phase 03 — transactions
+**Current focus:** Phase 04 — disputes
 
 ## Current Position
 
-Phase: 3
-Plan: 1 (complete)
-Current Plan: 03-01 complete
+Phase: 04 (disputes) — EXECUTING
+Plan: 2 of 2
+Current Plan: 1
 
 ## Current Phase
 
@@ -110,6 +110,7 @@ Phase 1 completa — todos os 5 planos executados.
 | Phase 02 P04 | 8 min | 2 tasks | 7 files |
 | 03 | 01 | 6 min | 2/2 | 25 |
 | Phase 03 P03 | 5min | 2 tasks | 7 files |
+| Phase 04 P01 | 3 min | 2 tasks | 9 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -161,6 +162,12 @@ Phase 1 completa — todos os 5 planos executados.
 - WithdrawalsListPage reuses exact same CSS class pattern as PaymentsListPage for visual consistency
 - withdrawalDetailController static ID capture is correct — controller is created fresh per SvelteKit route mount
 
+## Decisions Made in Plan 04-01
+
+- SelectFilter uses `placeholder` (not `label`) prop — plan used wrong prop name, fixed by reading real component API before implementing
+- MerchantAutocomplete uses `onChange` (not `onselect`) — adapted after confirming component interface
+- DisputeRepository uses dual-shape `Array.isArray(raw)` check — handles both array response and paginated envelope from API
+
 ## Next Action
 
-Phase 03 Plan 03 complete. TXN-04 and TXN-05 requirements satisfied. Withdrawals feature complete.
+Phase 04 Plan 01 complete. DISP-01 (lista paginada com filtros) and DISP-04 (MED row highlight) satisfied. Disputes list page fully implemented.

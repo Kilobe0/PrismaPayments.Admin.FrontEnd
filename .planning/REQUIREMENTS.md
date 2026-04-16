@@ -60,10 +60,10 @@
 
 ### Disputas
 
-- [ ] **DISP-01**: Lista paginada de disputas com filtros por status (OPEN/UNDER_REVIEW/ACCEPTED/REJECTED/RESOLVED) e por tipo (MED/CHARGEBACK/REFUND_REQUEST)
+- [x] **DISP-01**: Lista paginada de disputas com filtros por status (OPEN/UNDER_REVIEW/ACCEPTED/REJECTED/RESOLVED) e por tipo (MED/CHARGEBACK/REFUND_REQUEST)
 - [ ] **DISP-02**: Timeline visual de estado da disputa (abertura → análise → resolução)
 - [ ] **DISP-03**: Formulário de resolução: dropdown de status + textarea de resolução — ambos obrigatórios antes de submeter (role SUPPORT+)
-- [ ] **DISP-04**: MED (Mecanismo Especial de Devolução) destacado visualmente como time-sensitive
+- [x] **DISP-04**: MED (Mecanismo Especial de Devolução) destacado visualmente como time-sensitive
 
 ### Regras de Taxas
 

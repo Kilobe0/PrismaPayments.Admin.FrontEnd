@@ -84,7 +84,7 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 04-01-PLAN.md — Domain + data layer + DisputesListPage com MED row highlight (DataTable rowClass, StatusBadge ACCEPTED)
+- [x] 04-01-PLAN.md — Domain + data layer + DisputesListPage com MED row highlight (DataTable rowClass, StatusBadge ACCEPTED)
 - [ ] 04-02-PLAN.md — DisputeDetailPage: timeline 3-step, formulário de resolução SUPPORT+, rota [id]
 
 ### Phase 5: Fees
@@ -142,7 +142,7 @@ Plans:
 | 01.1. shadcn init + identidade visual | 3/3 | Complete    | 2026-03-25 |
 | 2. Merchants | 3/4 | In Progress|  |
 | 3. Transactions | 2/3 | In Progress|  |
-| 4. Disputes | 0/2 | Planned | - |
+| 4. Disputes | 1/2 | In Progress|  |
 | 5. Fees | 0/0 | Not started | - |
 | 6. Admin Users | 0/0 | Not started | - |
 | 7. Audit + Diagnostics | 0/0 | Not started | - |
