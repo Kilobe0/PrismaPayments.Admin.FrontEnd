@@ -21,6 +21,7 @@
     /** Snippet customizado para células: recebe a row e o columnId */
     cellSnippet?: Snippet<[{ row: Row<T>; columnId: string }]>;
     onRowClick?: (row: Row<T>) => void;
+    rowClass?: (row: Row<T>) => string;
   }
 
   let {
@@ -29,7 +30,8 @@
     pageSize = 20,
     loading = false,
     cellSnippet,
-    onRowClick
+    onRowClick,
+    rowClass
   }: Props = $props();
 
   let sorting = $state<SortingState>([]);
@@ -177,6 +179,7 @@
         {:else}
           {#each visibleRows as row}
             <Table.Row
+              class={rowClass?.(row) ?? ''}
               style="border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.08)); transition: background 0.15s; {onRowClick ? 'cursor: pointer;' : ''}"
               onmouseenter={(e) => (e.currentTarget.style.background = 'var(--color-surface-elevated, #141420)')}
               onmouseleave={(e) => (e.currentTarget.style.background = 'transparent')}

@@ -17,6 +17,7 @@
     ACTIVE:         { color: '#00E676', background: 'rgba(0,230,118,0.10)', border: 'rgba(0,230,118,0.20)' },
     APPROVED:       { color: '#00E676', background: 'rgba(0,230,118,0.10)', border: 'rgba(0,230,118,0.20)' },
     RESOLVED:       { color: '#00E676', background: 'rgba(0,230,118,0.10)', border: 'rgba(0,230,118,0.20)' },
+    ACCEPTED:       { color: '#00E676', background: 'rgba(0,230,118,0.10)', border: 'rgba(0,230,118,0.20)' },
     PENDING:        { color: '#FFB300', background: 'rgba(255,179,0,0.10)', border: 'rgba(255,179,0,0.20)' },
     PENDING_REVIEW: { color: '#FFB300', background: 'rgba(255,179,0,0.10)', border: 'rgba(255,179,0,0.20)' },
     OPEN:           { color: '#FFB300', background: 'rgba(255,179,0,0.10)', border: 'rgba(255,179,0,0.20)' },
