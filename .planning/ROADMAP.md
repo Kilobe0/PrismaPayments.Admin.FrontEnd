@@ -9,7 +9,7 @@ Este roadmap transforma os 52 requisitos v1 em 8 fases de entrega para o painel 
 - [x] **Phase 1: Auth + Core Infrastructure** - Corrigir o bug crítico de cookie, implementar refresh de token, ativar RBAC e construir todos os componentes compartilhados que as demais features dependem (completed 2026-03-25)
 - [ ] **Phase 2: Merchants** - Entrega completa da feature de merchants: lista paginada, detalhe tabulado, review de KYC, ações de status e criação — o template que todas as features seguintes copiam
 - [ ] **Phase 3: Transactions** - Listas cross-merchant de pagamentos e saques com filtros completos e páginas de detalhe por método de pagamento
-- [ ] **Phase 4: Disputes** - Lista de disputas com destaque para MED time-sensitive, timeline visual e formulário de resolução para SUPPORT+
+- [x] **Phase 4: Disputes** - Lista de disputas com destaque para MED time-sensitive, timeline visual e formulário de resolução para SUPPORT+ (completed 2026-04-16)
 - [ ] **Phase 5: Fees** - CRUD de regras de taxas (globais e por merchant) com conversão basis-points/centavos e simulador inline
 - [ ] **Phase 6: Admin Users** - Gestão de usuários administrativos exclusiva para SUPER_ADMIN, completamente oculta para outros roles
 - [ ] **Phase 7: Audit + Diagnostics** - Log cronológico de auditoria com diff visual e logs HTTP diagnósticos com filtros avançados e trace view
@@ -85,7 +85,7 @@ Plans:
 
 Plans:
 - [x] 04-01-PLAN.md — Domain + data layer + DisputesListPage com MED row highlight (DataTable rowClass, StatusBadge ACCEPTED)
-- [ ] 04-02-PLAN.md — DisputeDetailPage: timeline 3-step, formulário de resolução SUPPORT+, rota [id]
+- [x] 04-02-PLAN.md — DisputeDetailPage: timeline 3-step, formulário de resolução SUPPORT+, rota [id]
 
 ### Phase 5: Fees
 **Goal**: Admins conseguem visualizar, criar, editar e excluir regras de taxas globais e por merchant, e simular o resultado líquido de qualquer operação
@@ -142,7 +142,7 @@ Plans:
 | 01.1. shadcn init + identidade visual | 3/3 | Complete    | 2026-03-25 |
 | 2. Merchants | 3/4 | In Progress|  |
 | 3. Transactions | 2/3 | In Progress|  |
-| 4. Disputes | 1/2 | In Progress|  |
+| 4. Disputes | 2/2 | Complete   | 2026-04-16 |
 | 5. Fees | 0/0 | Not started | - |
 | 6. Admin Users | 0/0 | Not started | - |
 | 7. Audit + Diagnostics | 0/0 | Not started | - |

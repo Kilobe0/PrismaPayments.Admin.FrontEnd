@@ -3,20 +3,20 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_plan: 1
-status: executing
-last_updated: "2026-04-16T17:12:25.582Z"
+status: verifying
+last_updated: "2026-04-16T17:18:54.410Z"
 progress:
   total_phases: 9
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State
 
 **Last updated:** 2026-04-14
-**Status:** Ready to execute
-**Last session:** 2026-04-16T17:12:25.579Z
+**Status:** Phase complete — ready for verification
+**Last session:** 2026-04-16T17:18:54.407Z
 
 ## Accumulated Context
 
@@ -111,6 +111,7 @@ Phase 1 completa — todos os 5 planos executados.
 | 03 | 01 | 6 min | 2/2 | 25 |
 | Phase 03 P03 | 5min | 2 tasks | 7 files |
 | Phase 04 P01 | 3 min | 2 tasks | 9 files |
+| Phase 04 P02 | 8 min | 2 tasks | 5 files |
 
 ## Decisions Made in Plan 01-03
 
@@ -168,6 +169,13 @@ Phase 1 completa — todos os 5 planos executados.
 - MerchantAutocomplete uses `onChange` (not `onselect`) — adapted after confirming component interface
 - DisputeRepository uses dual-shape `Array.isArray(raw)` check — handles both array response and paginated envelope from API
 
+## Decisions Made in Plan 04-02
+
+- DisputeTimeline uses TERMINAL_STATUSES/ANALYSIS_STATUSES arrays — updatedAt never used as proxy for "Em Análise" step (D-10 anti-pattern avoided)
+- Resolution form hidden from DOM (not disabled) for VIEWER via {#if isSupport && !isAlreadyResolved} — DOM exclusion pattern confirmed for RBAC (D-14)
+- Plan template had {:end} Svelte syntax error — corrected to {/if} (auto-fix Rule 1)
+- paymentId rendered as link to /transactions/payments/{id} — no extra API call for related payment data (D-16)
+
 ## Next Action
 
-Phase 04 Plan 01 complete. DISP-01 (lista paginada com filtros) and DISP-04 (MED row highlight) satisfied. Disputes list page fully implemented.
+Phase 04 complete. All 4 DISP requirements satisfied (DISP-01 through DISP-04). Disputes feature fully implemented with list, detail, timeline, and resolution form.
