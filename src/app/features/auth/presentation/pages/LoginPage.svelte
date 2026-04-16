@@ -37,16 +37,16 @@
   <!-- Ambient glows -->
   <div style="
     position: absolute;
-    width: 600px; height: 600px;
-    top: -160px; left: -160px;
-    background: radial-gradient(circle, rgba(255,0,255,0.07) 0%, transparent 70%);
+    width: 900px; height: 900px;
+    top: -480px; left: -420px;
+    background: radial-gradient(circle, rgba(255,0,255,0.09) 0%, transparent 65%);
     pointer-events: none;
   "></div>
   <div style="
     position: absolute;
-    width: 500px; height: 500px;
-    bottom: -120px; right: -120px;
-    background: radial-gradient(circle, rgba(1,250,251,0.06) 0%, transparent 70%);
+    width: 800px; height: 800px;
+    bottom: -440px; right: -380px;
+    background: radial-gradient(circle, rgba(1,250,251,0.07) 0%, transparent 65%);
     pointer-events: none;
   "></div>
 
@@ -60,7 +60,7 @@
     background: #0F0F18;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 24px;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.70), 0 0 0 1px rgba(255,255,255,0.03) inset;
+    box-shadow: none;
   ">
     <!-- Top accent line -->
     <div style="
@@ -194,8 +194,8 @@
         style="
           position: relative;
           overflow: hidden;
-          background: linear-gradient(135deg, rgba(255,0,255,0.15) 0%, rgba(1,250,251,0.10) 100%);
-          border: 1px solid rgba(255,0,255,0.35);
+          background: linear-gradient(135deg, #220030 0%, #001E20 100%);
+          border: 1px solid rgba(255,0,255,0.45);
           border-radius: 12px;
           padding: 14px;
           color: #F6F6FF;
