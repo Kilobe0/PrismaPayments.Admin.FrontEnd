@@ -80,8 +80,12 @@ Plans:
   1. Admin (VIEWER+) visualiza lista paginada de disputas com filtros por status e tipo — disputas do tipo MED são destacadas visualmente como time-sensitive e destacam-se das demais
   2. Admin (VIEWER+) abre detalhe de uma disputa e vê a timeline visual completa dos estados (abertura → análise → resolução)
   3. Admin (SUPPORT+) preenche o formulário de resolução com status e texto de resolução — ambos os campos são obrigatórios antes do botão de submit ser habilitado — resolução persiste e status atualiza na lista
-**Plans**: TBD
+**Plans**: 2 plans
 **UI hint**: yes
+
+Plans:
+- [ ] 04-01-PLAN.md — Domain + data layer + DisputesListPage com MED row highlight (DataTable rowClass, StatusBadge ACCEPTED)
+- [ ] 04-02-PLAN.md — DisputeDetailPage: timeline 3-step, formulário de resolução SUPPORT+, rota [id]
 
 ### Phase 5: Fees
 **Goal**: Admins conseguem visualizar, criar, editar e excluir regras de taxas globais e por merchant, e simular o resultado líquido de qualquer operação
@@ -138,7 +142,7 @@ Plans:
 | 01.1. shadcn init + identidade visual | 3/3 | Complete    | 2026-03-25 |
 | 2. Merchants | 3/4 | In Progress|  |
 | 3. Transactions | 2/3 | In Progress|  |
-| 4. Disputes | 0/0 | Not started | - |
+| 4. Disputes | 0/2 | Planned | - |
 | 5. Fees | 0/0 | Not started | - |
 | 6. Admin Users | 0/0 | Not started | - |
 | 7. Audit + Diagnostics | 0/0 | Not started | - |
@@ -187,10 +191,10 @@ Plans:
 | TXN-03 | Phase 3 | Pending |
 | TXN-04 | Phase 3 | Pending |
 | TXN-05 | Phase 3 | Pending |
-| DISP-01 | Phase 4 | Pending |
-| DISP-02 | Phase 4 | Pending |
-| DISP-03 | Phase 4 | Pending |
-| DISP-04 | Phase 4 | Pending |
+| DISP-01 | Phase 4 | Planned (04-01) |
+| DISP-02 | Phase 4 | Planned (04-02) |
+| DISP-03 | Phase 4 | Planned (04-02) |
+| DISP-04 | Phase 4 | Planned (04-01) |
 | FEES-01 | Phase 5 | Pending |
 | FEES-02 | Phase 5 | Pending |
 | FEES-03 | Phase 5 | Pending |
